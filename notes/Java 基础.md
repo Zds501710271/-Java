@@ -585,482 +585,7 @@ public class NewStringTest {
 }
 ```
 
-# 三、运算
-
-## 参数传递
-
-Java 的参数是以值传递的形式传入方法中，而不是引用传递。
-
-以下代码中 Dog dog 的 dog 是一个指针，存储的是对象的地址。在将一个参数传入一个方法时，本质上是将对象的地址以值的方式传递到形参中。因此在方法中使指针引用其它对象，那么这两个指针此时指向的是完全不同的对象，在一方改变其所指向对象的内容时对另一方没有影响。
-
-```java
-public class Dog {
-
-    String name;
-
-    Dog(String name) {
-        this.name = name;
-    }
-
-    String getName() {
-        return this.name;
-    }
-
-    void setName(String name) {
-        this.name = name;
-    }
-
-    String getObjectAddress() {
-        return super.toString();
-    }
-}
-```
-
-```java
-public class PassByValueExample {
-    public static void main(String[] args) {
-        Dog dog = new Dog("A");
-        System.out.println(dog.getObjectAddress()); // Dog@4554617c
-        func(dog);
-        System.out.println(dog.getObjectAddress()); // Dog@4554617c
-        System.out.println(dog.getName());          // A
-    }
-
-    private static void func(Dog dog) {
-        System.out.println(dog.getObjectAddress()); // Dog@4554617c
-        dog = new Dog("B");
-        System.out.println(dog.getObjectAddress()); // Dog@74a14482
-        System.out.println(dog.getName());          // B
-    }
-}
-```
-
-如果在方法中改变对象的字段值会改变原对象该字段值，因为改变的是同一个地址指向的内容。
-
-```java
-class PassByValueExample {
-    public static void main(String[] args) {
-        Dog dog = new Dog("A");
-        func(dog);
-        System.out.println(dog.getName());          // B
-    }
-
-    private static void func(Dog dog) {
-        dog.setName("B");
-    }
-}
-```
-
-[StackOverflow: Is Java “pass-by-reference” or “pass-by-value”?](https://stackoverflow.com/questions/40480/is-java-pass-by-reference-or-pass-by-value)
-
-## float 与 double
-
-Java 不能隐式执行向下转型，因为这会使得精度降低。
-
-1.1 字面量属于 double 类型，不能直接将 1.1 直接赋值给 float 变量，因为这是向下转型。
-
-```java
-// float f = 1.1;
-```
-
-1.1f 字面量才是 float 类型。
-
-```java
-float f = 1.1f;
-```
-
-## 隐式类型转换
-
-因为字面量 1 是 int 类型，它比 short 类型精度要高，因此不能隐式地将 int 类型下转型为 short 类型。
-
-```java
-short s1 = 1;
-// s1 = s1 + 1;
-```
-
-但是使用 += 或者 ++ 运算符可以执行隐式类型转换。
-
-```java
-s1 += 1;
-// s1++;
-```
-
-上面的语句相当于将 s1 + 1 的计算结果进行了向下转型：
-
-```java
-s1 = (short) (s1 + 1);
-```
-
-[StackOverflow : Why don't Java's +=, -=, *=, /= compound assignment operators require casting?](https://stackoverflow.com/questions/8710619/why-dont-javas-compound-assignment-operators-require-casting)
-
-## switch
-
-从 Java 7 开始，可以在 switch 条件判断语句中使用 String 对象。
-
-```java
-String s = "a";
-switch (s) {
-    case "a":
-        System.out.println("aaa");
-        break;
-    case "b":
-        System.out.println("bbb");
-        break;
-}
-```
-
-switch 不支持 long，是因为 switch 的设计初衷是对那些只有少数的几个值进行等值判断，如果值过于复杂，那么还是用 if 比较合适。
-
-```java
-// long x = 111;
-// switch (x) { // Incompatible types. Found: 'long', required: 'char, byte, short, int, Character, Byte, Short, Integer, String, or an enum'
-//     case 111:
-//         System.out.println(111);
-//         break;
-//     case 222:
-//         System.out.println(222);
-//         break;
-// }
-```
-
-[StackOverflow : Why can't your switch statement data type be long, Java?](https://stackoverflow.com/questions/2676210/why-cant-your-switch-statement-data-type-be-long-java)
-
-# 四、继承
-
-## 访问权限
-
-Java 中有三个访问权限修饰符：private、protected 以及 public，如果不加访问修饰符，表示包级可见。
-
-可以对类或类中的成员（字段以及方法）加上访问修饰符。
-
-- 类可见表示其它类可以用这个类创建实例对象。
-- 成员可见表示其它类可以用这个类的实例对象访问到该成员；
-
-protected 用于修饰成员，表示在继承体系中成员对于子类可见，但是这个访问修饰符对于类没有意义。
-
-设计良好的模块会隐藏所有的实现细节，把它的 API 与它的实现清晰地隔离开来。模块之间只通过它们的 API 进行通信，一个模块不需要知道其他模块的内部工作情况，这个概念被称为信息隐藏或封装。因此访问权限应当尽可能地使每个类或者成员不被外界访问。
-
-如果子类的方法重写了父类的方法，那么子类中该方法的访问级别不允许低于父类的访问级别。这是为了确保可以使用父类实例的地方都可以使用子类实例，也就是确保满足里氏替换原则。
-
-字段决不能是公有的，因为这么做的话就失去了对这个字段修改行为的控制，客户端可以对其随意修改。例如下面的例子中，AccessExample 拥有 id 公有字段，如果在某个时刻，我们想要使用 int 存储 id 字段，那么就需要修改所有的客户端代码。
-
-```java
-public class AccessExample {
-    public String id;
-}
-```
-
-可以使用公有的 getter 和 setter 方法来替换公有字段，这样的话就可以控制对字段的修改行为。
-
-```java
-public class AccessExample {
-
-    private int id;
-
-    public String getId() {
-        return id + "";
-    }
-
-    public void setId(String id) {
-        this.id = Integer.valueOf(id);
-    }
-}
-```
-
-但是也有例外，如果是包级私有的类或者私有的嵌套类，那么直接暴露成员不会有特别大的影响。
-
-```java
-public class AccessWithInnerClassExample {
-
-    private class InnerClass {
-        int x;
-    }
-
-    private InnerClass innerClass;
-
-    public AccessWithInnerClassExample() {
-        innerClass = new InnerClass();
-    }
-
-    public int getValue() {
-        return innerClass.x;  // 直接访问
-    }
-}
-```
-
-## 抽象类与接口
-
-**1. 抽象类** 
-
-抽象类和抽象方法都使用 abstract 关键字进行声明。如果一个类中包含抽象方法，那么这个类必须声明为抽象类。
-
-抽象类和普通类最大的区别是，抽象类不能被实例化，需要继承抽象类才能实例化其子类。
-
-```java
-public abstract class AbstractClassExample {
-
-    protected int x;
-    private int y;
-
-    public abstract void func1();
-
-    public void func2() {
-        System.out.println("func2");
-    }
-}
-```
-
-```java
-public class AbstractExtendClassExample extends AbstractClassExample {
-    @Override
-    public void func1() {
-        System.out.println("func1");
-    }
-}
-```
-
-```java
-// AbstractClassExample ac1 = new AbstractClassExample(); // 'AbstractClassExample' is abstract; cannot be instantiated
-AbstractClassExample ac2 = new AbstractExtendClassExample();
-ac2.func1();
-```
-
-**2. 接口** 
-
-接口是抽象类的延伸，在 Java 8 之前，它可以看成是一个完全抽象的类，也就是说它不能有任何的方法实现。
-
-从 Java 8 开始，接口也可以拥有默认的方法实现，这是因为不支持默认方法的接口的维护成本太高了。在 Java 8 之前，如果一个接口想要添加新的方法，那么要修改所有实现了该接口的类。
-
-接口的成员（字段 + 方法）默认都是 public 的，并且不允许定义为 private 或者 protected。
-
-接口的字段默认都是 static 和 final 的。
-
-```java
-public interface InterfaceExample {
-
-    void func1();
-
-    default void func2(){
-        System.out.println("func2");
-    }
-
-    int x = 123;
-    // int y;               // Variable 'y' might not have been initialized
-    public int z = 0;       // Modifier 'public' is redundant for interface fields
-    // private int k = 0;   // Modifier 'private' not allowed here
-    // protected int l = 0; // Modifier 'protected' not allowed here
-    // private void fun3(); // Modifier 'private' not allowed here
-}
-```
-
-```java
-public class InterfaceImplementExample implements InterfaceExample {
-    @Override
-    public void func1() {
-        System.out.println("func1");
-    }
-}
-```
-
-```java
-// InterfaceExample ie1 = new InterfaceExample(); // 'InterfaceExample' is abstract; cannot be instantiated
-InterfaceExample ie2 = new InterfaceImplementExample();
-ie2.func1();
-System.out.println(InterfaceExample.x);
-```
-
-**3. 比较** 
-
-- 从设计层面上看，抽象类提供了一种 IS-A 关系，那么就必须满足里式替换原则，即子类对象必须能够替换掉所有父类对象。而接口更像是一种 LIKE-A 关系，它只是提供一种方法实现契约，并不要求接口和实现接口的类具有 IS-A 关系。
-- 从使用上来看，一个类可以实现多个接口，但是不能继承多个抽象类。
-- 接口的字段只能是 static 和 final 类型的，而抽象类的字段没有这种限制。
-- 接口的成员只能是 public 的，而抽象类的成员可以有多种访问权限。
-
-**4. 使用选择** 
-
-使用接口：
-
-- 需要让不相关的类都实现一个方法，例如不相关的类都可以实现 Compareable 接口中的 compareTo() 方法；
-- 需要使用多重继承。
-
-使用抽象类：
-
-- 需要在几个相关的类中共享代码。
-- 需要能控制继承来的成员的访问权限，而不是都为 public。
-- 需要继承非静态和非常量字段。
-
-在很多情况下，接口优先于抽象类。因为接口没有抽象类严格的类层次结构要求，可以灵活地为一个类添加行为。并且从 Java 8 开始，接口也可以有默认的方法实现，使得修改接口的成本也变的很低。
-
-- [Abstract Methods and Classes](https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html)
-- [深入理解 abstract class 和 interface](https://www.ibm.com/developerworks/cn/java/l-javainterface-abstract/)
-- [When to Use Abstract Class and Interface](https://dzone.com/articles/when-to-use-abstract-class-and-intreface)
-
-
-## super
-
-- 访问父类的构造函数：可以使用 super() 函数访问父类的构造函数，从而委托父类完成一些初始化的工作。
-- 访问父类的成员：如果子类重写了父类的某个方法，可以通过使用 super 关键字来引用父类的方法实现。
-
-```java
-public class SuperExample {
-
-    protected int x;
-    protected int y;
-
-    public SuperExample(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void func() {
-        System.out.println("SuperExample.func()");
-    }
-}
-```
-
-```java
-public class SuperExtendExample extends SuperExample {
-
-    private int z;
-
-    public SuperExtendExample(int x, int y, int z) {
-        super(x, y);
-        this.z = z;
-    }
-
-    @Override
-    public void func() {
-        super.func();
-        System.out.println("SuperExtendExample.func()");
-    }
-}
-```
-
-```java
-SuperExample e = new SuperExtendExample(1, 2, 3);
-e.func();
-```
-
-```html
-SuperExample.func()
-SuperExtendExample.func()
-```
-
-[Using the Keyword super](https://docs.oracle.com/javase/tutorial/java/IandI/super.html)
-
-## 重写与重载
-
-**1. 重写（Override）** 
-
-存在于继承体系中，指子类实现了一个与父类在方法声明上完全相同的一个方法。
-
-为了满足里式替换原则，重写有以下三个限制：
-
-- 子类方法的访问权限必须大于等于父类方法；
-- 子类方法的返回类型必须是父类方法返回类型或为其子类型。
-- 子类方法抛出的异常类型必须是父类抛出异常类型或为其子类型。
-
-使用 @Override 注解，可以让编译器帮忙检查是否满足上面的三个限制条件。
-
-下面的示例中，SubClass 为 SuperClass 的子类，SubClass 重写了 SuperClass 的 func() 方法。其中：
-
-- 子类方法访问权限为 public，大于父类的 protected。
-- 子类的返回类型为 ArrayList<Integer>，是父类返回类型 List<Integer> 的子类。
-- 子类抛出的异常类型为 Exception，是父类抛出异常 Throwable 的子类。
-- 子类重写方法使用 @Override 注解，从而让编译器自动检查是否满足限制条件。
-
-```java
-class SuperClass {
-    protected List<Integer> func() throws Throwable {
-        return new ArrayList<>();
-    }
-}
-
-class SubClass extends SuperClass {
-    @Override
-    public ArrayList<Integer> func() throws Exception {
-        return new ArrayList<>();
-    }
-}
-```
-
-在调用一个方法时，先从本类中查找看是否有对应的方法，如果没有查找到再到父类中查看，看是否有继承来的方法。否则就要对参数进行转型，转成父类之后看是否有对应的方法。总的来说，方法调用的优先级为：
-
-- this.func(this)
-- super.func(this)
-- this.func(super)
-- super.func(super)
-
-
-```java
-/*
-    A
-    |
-    B
-    |
-    C
-    |
-    D
- */
-
-
-class A {
-
-    public void show(A obj) {
-        System.out.println("A.show(A)");
-    }
-
-    public void show(C obj) {
-        System.out.println("A.show(C)");
-    }
-}
-
-class B extends A {
-
-    @Override
-    public void show(A obj) {
-        System.out.println("B.show(A)");
-    }
-}
-
-class C extends B {
-}
-
-class D extends C {
-}
-```
-
-```java
-public static void main(String[] args) {
-
-    A a = new A();
-    B b = new B();
-    C c = new C();
-    D d = new D();
-
-    // 在 A 中存在 show(A obj)，直接调用
-    a.show(a); // A.show(A)
-    // 在 A 中不存在 show(B obj)，将 B 转型成其父类 A
-    a.show(b); // A.show(A)
-    // 在 B 中存在从 A 继承来的 show(C obj)，直接调用
-    b.show(c); // A.show(C)
-    // 在 B 中不存在 show(D obj)，但是存在从 A 继承来的 show(C obj)，将 D 转型成其父类 C
-    b.show(d); // A.show(C)
-
-    // 引用的还是 B 对象，所以 ba 和 b 的调用结果一样
-    A ba = new B();
-    ba.show(c); // A.show(C)
-    ba.show(d); // A.show(C)
-}
-```
-
-**2. 重载（Overload）** 
-
-存在于同一个类中，指一个方法与已经存在的方法名称上相同，但是参数类型、个数、顺序至少有一个不同。
-
-应该注意的是，返回值不同，其它都相同不算是重载。
-
-# 五、Object 通用方法
+# 三、Object 通用方法
 
 ## 概览
 
@@ -1132,7 +657,7 @@ x.equals(null); // false;
 
 - 对于基本类型，== 判断两个值是否相等，基本类型没有 equals() 方法。
 - 对于引用类型，== 判断两个变量是否引用同一个对象，而 equals() 判断引用的对象是否等价。
-
+- StringBuffer 和 StringBuilder 特殊， ==和 equals() 都是比较地址
 ```java
 Integer x = new Integer(1);
 Integer y = new Integer(1);
@@ -1294,8 +819,8 @@ public class CloneExample implements Cloneable {
 
 **2. 浅拷贝** 
 
-拷贝对象和原始对象的引用类型引用同一个对象。
-
+- 拷贝对象和原始对象的引用类型引用同一个对象。
+- 也是创建了一个对象，但是这个对象的某些内容（比如A）依然是被拷贝对象的，即通过这两个对象中任意一个修改A，两个对象的A都会受到影响
 ```java
 public class ShallowCloneExample implements Cloneable {
 
@@ -1337,8 +862,8 @@ System.out.println(e2.get(2)); // 222
 
 **3. 深拷贝** 
 
-拷贝对象和原始对象的引用类型引用不同对象。
-
+- 拷贝对象和原始对象的引用类型引用不同对象。
+- 相当于创建了一个新的对象，只是这个对象的所有内容，都和被拷贝的对象一模一样而已，即两者的修改是隔离的，相互之间没有影响
 ```java
 public class DeepCloneExample implements Cloneable {
 
@@ -1597,18 +1122,76 @@ public InitialOrderTest() {
 
 
 # 七、反射
+- 什么是Java反射机制?？
+	- Java 反射机制是在运行状态中，对于任意一个类，都能够获得这个类的所有属性和方法，对于任意一个对象都能够调用它的任意一个属性和方法。这种在运行时动态的获取信息以及动态调用对象的方法的功能称为Java 的反射机制
+- 反射的原理？
+	- Java语言在编译之后会生成一个class文件，反射就是通过字节码文件找到其类中的方法和属性等；
+- 每个类都有一个  **Class**  对象，包含了与类有关的信息。当编译一个新类时，会产生一个同名的 .class 文件，该文件内容保存着 Class 对象。
+- 类加载相当于 Class 对象的加载，类在第一次使用时才动态加载到 JVM 中。也可以使用 `Class.forName("com.mysql.jdbc.Driver")` 这种方式来控制类的加载，该方法会返回一个 Class 对象。
+- 反射可以提供运行时的类信息，并且这个类可以在运行时才加载进来，甚至在编译时期该类的 .class 不存在也可以加载进来。
 
-每个类都有一个  **Class**  对象，包含了与类有关的信息。当编译一个新类时，会产生一个同名的 .class 文件，该文件内容保存着 Class 对象。
+- Class 和 java.lang.reflect 一起对反射提供了支持，java.lang.reflect 类库主要包含了以下三个类：
+	-  **Field** ：可以使用 get() 和 set() 方法读取和修改 Field 对象关联的字段；
+	-  **Method** ：可以使用 invoke() 方法调用与 Method 对象关联的方法；
+	-  **Constructor** ：可以用 Constructor 的 newInstance() 创建新的对象。
 
-类加载相当于 Class 对象的加载，类在第一次使用时才动态加载到 JVM 中。也可以使用 `Class.forName("com.mysql.jdbc.Driver")` 这种方式来控制类的加载，该方法会返回一个 Class 对象。
-
-反射可以提供运行时的类信息，并且这个类可以在运行时才加载进来，甚至在编译时期该类的 .class 不存在也可以加载进来。
-
-Class 和 java.lang.reflect 一起对反射提供了支持，java.lang.reflect 类库主要包含了以下三个类：
-
--  **Field** ：可以使用 get() 和 set() 方法读取和修改 Field 对象关联的字段；
--  **Method** ：可以使用 invoke() 方法调用与 Method 对象关联的方法；
--  **Constructor** ：可以用 Constructor 的 newInstance() 创建新的对象。
+- 使用反射的步骤
+	- 1.步骤
+		- 获取想要操作的类的Class对象
+		- 调用Class类中的方法
+		- 使用反射API来操作这些信息
+	- 2.获取Class对象的方法
+		- 调用某个对象的getClass()方法
+		```
+		Person p=new Person();
+		Class clazz=p.getClass();
+		```
+		- 调用某个类的class属性来获取该类对应的Class对象
+		```
+		Class clazz=Person.class;
+		```
+		- 使用Class类中的forName()静态方法; (最安全/性能最好)
+		```
+		Class <?> clazz=Class.forName("类的全路径"); (最常用)
+		```
+	- 3.获取方法和属性信息
+	```
+	 String className="ch13.Student";//注意这里是包名+类名
+	 Class<?> class3=Class.forName(className);
+		- 方法
+		Method []MethodArray=class3.getMethods();获取一个类全部方法
+		Method []MethodArray=class3.getDeclaredMethods();
+		- 属性
+		Field[] allFields = class1.getFields();//获取class对象的所有属性
+		Field[] field=class3.getDeclaredFields();
+		for(java.lang.reflect.Field f:field)
+		{
+			System.out.println(f);
+		}
+		- 构造
+		Constructor[] constructor=clazz.getDeclaredConstructors();
+    		for(Constructor c:constructor){
+       			System.out.println(c.toString());
+		}
+	- 当我们获得了想要操作的类的Class对象后，可以通过Class类中的方法获取并查看该类中的方法和属性。 
+	```
+```
+创建对象
+//获取Person类的Class对象
+Class clazz=Class.forName("reflection.Person");
+//第一种方法创建对象
+//创建对象
+	Person p=(Person) clazz.newInstance();
+	p.setName("张三");//设置属性
+	p.setAge(16);
+	p.setGender("男");
+	System.out.println(p.toString());
+//第二种方法创建对象
+//获取构造方法
+	Constructor c=clazz.getDeclaredConstructor(String.class,String.class,int.class);
+	Person p1=(Person) c.newInstance("李四","男",20); //创建对象并设置属性
+	System.out.println(p1.toString());
+```
 
 **反射的优点：** 
 
