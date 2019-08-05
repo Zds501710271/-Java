@@ -2,7 +2,6 @@
 * [一、数据类型](#一数据类型)
     * [基本类型](#基本类型)
     * [包装类型](#包装类型)
-    * [装箱/拆箱](#装箱/拆箱)
     * [缓存池](#缓存池)
     
 * [二、String](#二string)
@@ -44,39 +43,67 @@
 
 # 一、数据类型
 
-## 基本类型
-
-- byte/8
-- char/16
-- short/16
-- int/32
-- float/32
-- long/64
-- double/64
-- boolean/\~
-
-boolean 只有两个值：true、false，可以使用 1 bit 来存储，但是具体大小没有明确规定。JVM 会在编译时期将 boolean 类型的数据转换为 int，使用 1 来表示 true，0 表示 false。JVM 支持 boolean 数组，但是是通过读写 byte 数组来实现的。
-
-- [Primitive Data Types](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html)
-- [The Java® Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/jvms8.pdf)
-
-## 包装类型
-
-基本类型都有对应的包装类型，基本类型与其对应的包装类型之间的赋值使用自动装箱与拆箱完成。
-
-```java
-Integer x = 2;     // 装箱
-int y = x;         // 拆箱
-```
+## 基本类型和包装类型
+- 基本类型
+boolean， byte/8， char/16，short/16，int/32，float/32，long/64，double/64
+- 包装类型
+Boolean， Byte，Character， Short， Integer， Float， Long， Double
+boolean 只有两个值：true、false，可以使用 1 bit 来存储，但是具体大小没有明确规定。JVM 会在编译时期将 boolean 类型的数据转换为 int，使用 1 来表示 
 
 ## 装箱/拆箱
+- 装箱：将基本类型转换为包装类型；
+- 拆箱：将包装类型转换为基本数据类型；
+Java使用自动装箱和拆箱机制，节省了常用数值的内存开销和创建对象的开销，提高了效率，由编译器来完成，编译器会在编译期根据语法决定是否进行装箱和拆箱动作。
+	
+   - 进行 = 赋值操作（装箱或拆箱）
+	- 进行+，-，*，/混合运算 （拆箱）
+	- 进行>,<,==比较运算（拆箱）
+	- 调用equals进行比较（装箱）
+   - ArrayList,HashMap等集合类 添加基础类型数据时（装箱）  
 
-基本类型都有对应的包装类型，基本类型与其对应的包装类型之间的赋值使用自动装箱与拆箱完成。
+## String 转出 int 型， 判断能不能转？ 如何转？
+答： 可以转， 得处理异常 Integer.parseInt(s) 主要为 NumberFormatException： 1） 当你输入为字母时， 也就是内容不是数字时， 如 abcd 2） 当你输入为空时 3） 当你输入超出int 上限时
 
-```java
-Integer x = 2;     // 装箱
-int y = x;         // 拆箱
+## short s1 = 1; s1 = s1 + 1;有什么错? short s1 =1; s1 +=1;有什么错?
+-  对于 short s1=1;s1=s1+1 来说， 在 s1+1 运算时会自动提升表达式的类型为 int，那么将 int 赋予给 short 类型的变量 s1 会出现类型转换错误。
+-  对于 short s1=1;s1+=1 来说 +=是 java 语言规定的运算符， java 编译器会对它进行特殊处理， 因此可以正确编译。
+## Int 与 Integer 区别
+- int和Integer的区别
+   - 1、Integer是int的包装类，int则是java的一种基本数据类型 
+   - 2、Integer变量必须实例化后才能使用，而int变量不需要 
+   - 3、Integer实际是对象的引用，当new一个Integer时，实际上是生成一个指针指向此对象；而int则是直接存储数据值 
+   - 4、Integer的默认值是null，int的默认值是0
+- 延伸： 
+关于Integer和int的比较 
+- 1、由于Integer变量实际上是对一个Integer对象的引用，所以两个通过new生成的Integer变量永远是不相等的（因为new生成的是两个对象，其内存地址不同）。
 ```
+Integer i = new Integer(100);
+Integer j = new Integer(100);
+System.out.print(i == j); //false
+```
+- 2、Integer变量和int变量比较时，只要两个变量的值是向等的，则结果为true（因为包装类Integer和基本数据类型int比较时，java会自动拆包装为int，然后进行比较，实际上就变为两个int变量的比较）
+```
+Integer i = new Integer(100);
+int j = 100；
+System.out.print(i == j); //true
+```
+- 3、非new生成的Integer变量和new Integer()生成的变量比较时，结果为false。（因为非new生成的Integer变量指向的是java常量池中的对象，而new Integer()生成的变量指向堆中新建的对象，两者在内存中的地址不同）
+```
+Integer i = new Integer(100);
+Integer j = 100;
+System.out.print(i == j); //false
+```
+- 4、对于两个非new生成的Integer对象，进行比较时，如果两个变量的值在区间-128到127之间，则比较结果为true，如果两个变量的值不在此区间，则比较结果为false
+```
+Integer i = 100;
+Integer j = 100;
+System.out.print(i == j); //true
+Integer i = 128;
+Integer j = 128;
+System.out.print(i == j); //false
+```
+java对于-128到127之间的数，会进行缓存，Integer i = 127时，会将127进行缓存，下次再写Integer j = 127时，就会直接从缓存中取，就不会new了
+
 ## 缓存池
 
 new Integer(123) 与 Integer.valueOf(123) 的区别在于：
@@ -104,39 +131,6 @@ public static Integer valueOf(int i) {
 ```
 
 在 Java 8 中，Integer 缓存池的大小默认为 -128\~127。
-
-```java
-static final int low = -128;
-static final int high;
-static final Integer cache[];
-
-static {
-    // high value may be configured by property
-    int h = 127;
-    String integerCacheHighPropValue =
-        sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
-    if (integerCacheHighPropValue != null) {
-        try {
-            int i = parseInt(integerCacheHighPropValue);
-            i = Math.max(i, 127);
-            // Maximum array size is Integer.MAX_VALUE
-            h = Math.min(i, Integer.MAX_VALUE - (-low) -1);
-        } catch( NumberFormatException nfe) {
-            // If the property cannot be parsed into an int, ignore it.
-        }
-    }
-    high = h;
-
-    cache = new Integer[(high - low) + 1];
-    int j = low;
-    for(int k = 0; k < cache.length; k++)
-        cache[k] = new Integer(j++);
-
-    // range [-128, 127] must be interned (JLS7 5.1.7)
-    assert IntegerCache.high >= 127;
-}
-```
-
 编译器会在自动装箱过程调用 valueOf() 方法，因此多个值相同且值在缓存池范围内的 Integer 实例使用自动装箱来创建，那么就会引用相同的对象。
 
 ```java
