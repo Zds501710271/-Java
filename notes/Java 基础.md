@@ -66,16 +66,299 @@
 - 项目中对多态的应用:
 	- 举一个简单的例子：在物流管理系统中，有两种用户：订购客户和卖方客户，两个客户都可以登录系统，他们有相同的方法login，但登陆之后他们会进入不同的页面，也就是在登录的时候会有不同的操作，两种客户都继承父类的login方法，但对于不同的对象，拥有不同的操作。
 
+## super
+
+- 访问父类的构造函数：可以使用 super() 函数访问父类的构造函数，从而委托父类完成一些初始化的工作。
+- 访问父类的成员：如果子类重写了父类的某个方法，可以通过使用 super 关键字来引用父类的方法实现。
+
+```java
+public class SuperExample {
+
+    protected int x;
+    protected int y;
+
+    public SuperExample(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void func() {
+        System.out.println("SuperExample.func()");
+    }
+}
+```
+
+```java
+public class SuperExtendExample extends SuperExample {
+
+    private int z;
+
+    public SuperExtendExample(int x, int y, int z) {
+        super(x, y);
+        this.z = z;
+    }
+
+    @Override
+    public void func() {
+        super.func();
+        System.out.println("SuperExtendExample.func()");
+    }
+}
+```
+
+```java
+SuperExample e = new SuperExtendExample(1, 2, 3);
+e.func();
+```
+
+```html
+SuperExample.func()
+SuperExtendExample.func()
+```
+
+## 重写和重载的区别。
+- 重载
+	- 发生在同一个类中
+	- 方法名必须相同，
+	- 参数类型不同、个数不同、顺序不同，方法返回值和访问修饰符可以不同，	发生在编译时。
+- 重写
+	- 发生在父子类中
+	- 方法名、参数列表必须相同
+	- 子类方法的访问权限必须大于等于父类方法；
+	- 子类方法的返回类型必须是父类方法返回类型或为其子类型。
+	- 子类方法抛出的异常类型必须是父类抛出异常类型或为其子类型。如果父类方法访问修饰符为private则子类中不可见，也就不是重写。
+	- 发生在运行时。
+- 下面的示例中，SubClass 为 SuperClass 的子类，SubClass 重写了 SuperClass 的 func() 方法。其中：
+	- 子类方法访问权限为 public，大于父类的 protected。
+	- 子类的返回类型为 ArrayList，是父类返回类型 List 的子类。
+	- 子类抛出的异常类型为 Exception，是父类抛出异常 Throwable 的子类。
+	- 子类重写方法使用 @Override 注解，从而让编译器自动检查是否满足限制条件。
+```
+class SuperClass {
+    protected List<Integer> func() throws Throwable {
+        return new ArrayList<>();
+    }
+}
+
+class SubClass extends SuperClass {
+    @Override
+    public ArrayList<Integer> func() throws Exception {
+        return new ArrayList<>();
+    }
+}
+```
+在调用一个方法时，先从本类中查找看是否有对应的方法，如果没有查找到再到父类中查看，看是否有继承来的方法。否则就要对参数进行转型，转成父类之后看是否有对应的方法。总的来说，方法调用的优先级为：
+
+- this.func(this)
+- super.func(this)
+- this.func(super)
+- super.func(super)
+
+
+```java
+/*
+    A
+    |
+    B
+    |
+    C
+    |
+    D
+ */
+
+
+class A {
+
+    public void show(A obj) {
+        System.out.println("A.show(A)");
+    }
+
+    public void show(C obj) {
+        System.out.println("A.show(C)");
+    }
+}
+
+class B extends A {
+
+    @Override
+    public void show(A obj) {
+        System.out.println("B.show(A)");
+    }
+}
+
+class C extends B {
+}
+
+class D extends C {
+}
+```
+
+```java
+public static void main(String[] args) {
+
+    A a = new A();
+    B b = new B();
+    C c = new C();
+    D d = new D();
+
+    // 在 A 中存在 show(A obj)，直接调用
+    a.show(a); // A.show(A)
+    // 在 A 中不存在 show(B obj)，将 B 转型成其父类 A
+    a.show(b); // A.show(A)
+    // 在 B 中存在从 A 继承来的 show(C obj)，直接调用
+    b.show(c); // A.show(C)
+    // 在 B 中不存在 show(D obj)，但是存在从 A 继承来的 show(C obj)，将 D 转型成其父类 C
+    b.show(d); // A.show(C)
+
+    // 引用的还是 B 对象，所以 ba 和 b 的调用结果一样
+    A ba = new B();
+    ba.show(c); // A.show(C)
+    ba.show(d); // A.show(C)
+}
+```
+
 ## 为什么Java是单继承？
+<div align="center"> <img src="pics/为什么Java是单继承.png" width="600px"> </div><br>
+
+## 继承的好处和坏处
+- 好处： 
+	- 1. 子类能自动继承父类的接口
+	- 2. 创建子类的对象时，无须创建父类的对象
+- 坏处:	
+	- 1. 破坏封装，子类与父类之间紧密耦合，子类依赖于父类的实现，子类缺乏独立性
+	- 2. 支持扩展，但是往往以增加系统结构的复杂度为代价
+	- 3. 不支持动态继承。在运行时，子类无法选择不同的父类
+	- 4. 子类不能改变父类的接口
 
 
+## Java 中是否可以覆盖(override)一个 private 或者是 static 的方法？
+- static 方法是编译时静态绑定，方法覆盖是基于运行时动态绑定
+- private 修饰的变量和方法只能在当前类中使用，不能被继承。子类中访问不到。当然也不能覆盖。
 
+## public,protected,private,以及默认
+- public在任何地方都能访问；
+- protected在同包内的类及包外的子类能访问；
+- private只有在本类中才能访问；
+- 默认不写在同包内能访问。
 
+## 接口和抽象类
+**1. 抽象类** 
 
+- 抽象类是什么：
+抽象类不能创建实例，它只能作为父类被继承。抽象类是从多个具体类中抽象出来的父类，它具有更高层次的抽象。从多个具有相同特征的类中抽象出一个抽象类，以这个抽象类作为其子类的模板，从而避免了子类的随意性。
+	- (1) 抽象方法只作声明，而不包含实现，可以看成是没有实现体的虚方法
+	- (2) 抽象类不能被实例化
+	- (3) 抽象类可以但不是必须有抽象属性和抽象方法，但是一旦有了抽象方法，就一定要把这个类声明为抽象类
+	- (4) 具体派生类必须覆盖基类的抽象方法
+	- (5) 抽象派生类可以覆盖基类的抽象方法，也可以不覆盖。如果不覆盖，则其具体派生类必须覆盖它们
+- 抽象类和抽象方法都使用 abstract 关键字进行声明。如果一个类中包含抽象方法，那么这个类必须声明为抽象类。
+- 抽象类和普通类最大的区别是，抽象类不能被实例化，需要继承抽象类才能实例化其子类。
 
+```java
+public abstract class AbstractClassExample {
 
+    protected int x;
+    private int y;
 
+    public abstract void func1();
 
+    public void func2() {
+        System.out.println("func2");
+    }
+}
+```
+
+```java
+public class AbstractExtendClassExample extends AbstractClassExample {
+    @Override
+    public void func1() {
+        System.out.println("func1");
+    }
+}
+```
+
+```java
+// AbstractClassExample ac1 = new AbstractClassExample(); // 'AbstractClassExample' is abstract; cannot be instantiated
+AbstractClassExample ac2 = new AbstractExtendClassExample();
+ac2.func1();
+```
+
+**2. 接口** 
+
+接口是抽象类的延伸，在 Java 8 之前，它可以看成是一个完全抽象的类，也就是说它不能有任何的方法实现。
+
+从 Java 8 开始，接口也可以拥有默认的方法实现，这是因为不支持默认方法的接口的维护成本太高了。在 Java 8 之前，如果一个接口想要添加新的方法，那么要修改所有实现了该接口的类。
+
+- 1.在接口中只有方法的声明，没有方法体。 （Java8 接口可以有实例方法） 
+- 2.在接口中只有常量，因为定义的变量，在编译的时候都会默认加上 public static final (必须被初始化，不能改变) 
+- 3.在接口中的方法，永远都被public来修饰(只能)。 
+- 4.接口中没有构造方法，也不能实例化接口的对象。 
+- 5.接口可以实现多继承 
+- 6.接口中定义的方法都需要有实现类来实现，如果实现类不能实现接口中的所有方法则实现类定义为抽象类。
+
+```java
+public interface InterfaceExample {
+
+    void func1();
+
+    default void func2(){
+        System.out.println("func2");
+    }
+
+    int x = 123;
+    // int y;               // Variable 'y' might not have been initialized
+    public int z = 0;       // Modifier 'public' is redundant for interface fields
+    // private int k = 0;   // Modifier 'private' not allowed here
+    // protected int l = 0; // Modifier 'protected' not allowed here
+    // private void fun3(); // Modifier 'private' not allowed here
+}
+```
+
+```java
+public class InterfaceImplementExample implements InterfaceExample {
+    @Override
+    public void func1() {
+        System.out.println("func1");
+    }
+}
+```
+
+```java
+// InterfaceExample ie1 = new InterfaceExample(); // 'InterfaceExample' is abstract; cannot be instantiated
+InterfaceExample ie2 = new InterfaceImplementExample();
+ie2.func1();
+System.out.println(InterfaceExample.x);
+```
+
+**3. 区别** 
+
+- 从设计层面上看，抽象类提供了一种 IS-A 关系，那么就必须满足里式替换原则，即子类对象必须能够替换掉所有父类对象。而接口更像是一种 LIKE-A 关系，它只是提供一种方法实现契约，并不要求接口和实现接口的类具有 IS-A 关系。
+- 从使用上来看，一个类可以实现多个接口，但是不能继承多个抽象类。
+- 接口的字段只能是 static 和 final 类型的，而抽象类的字段没有这种限制。
+- 接口的成员只能是 public 的，而抽象类的成员可以有多种访问权限。
+- 接口中所有的方法隐含的都是抽象的。而抽象类则可以同时包含抽象和非抽象的方法。（Java8 接口可以有实例方法 需要关键字default）
+- Java接口中声明的变量默认是public static final（必须赋初始值）。抽象类可以包含非final的变量。
+- 接口可继承接口，不能继承类（抽象类和普通类）;抽象类可继承接口也可继承具体类（继承接口时可只实现部分方法）
+- 非抽象类如果要实现一个接口，它必须要实现接口声明的所有方法。类可以不实现抽象类或接口声明的所有方法，当然，在这种情况下，类也必须得声明成是抽象的。
+<div align="center"> <img src="pics/抽象类和接口的区别.PNG" width="600px"> </div><br>
+**4. 使用选择** 
+
+使用接口：
+
+- 需要让不相关的类都实现一个方法，例如不相关的类都可以实现 Compareable 接口中的 compareTo() 方法；
+- 需要使用多重继承。
+
+使用抽象类：
+
+- 需要在几个相关的类中共享代码。
+- 需要能控制继承来的成员的访问权限，而不是都为 public。
+- 需要继承非静态和非常量字段。
+
+在很多情况下，接口优先于抽象类。因为接口没有抽象类严格的类层次结构要求，可以灵活地为一个类添加行为。并且从 Java 8 开始，接口也可以有默认的方法实现，使得修改接口的成本也变的很低。
+
+- [Abstract Methods and Classes](https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html)
+- [深入理解 abstract class 和 interface](https://www.ibm.com/developerworks/cn/java/l-javainterface-abstract/)
+- [When to Use Abstract Class and Interface](https://dzone.com/articles/when-to-use-abstract-class-and-intreface)
 
 
 # 一、数据类型
@@ -158,15 +441,6 @@ System.out.println(z == k);   // true
 ```
 
 valueOf() 方法的实现比较简单，就是先判断值是否在缓存池中，如果在的话就直接返回缓存池的内容。
-
-```java
-public static Integer valueOf(int i) {
-    if (i >= IntegerCache.low && i <= IntegerCache.high)
-        return IntegerCache.cache[i + (-IntegerCache.low)];
-    return new Integer(i);
-}
-```
-
 在 Java 8 中，Integer 缓存池的大小默认为 -128\~127。
 编译器会在自动装箱过程调用 valueOf() 方法，因此多个值相同且值在缓存池范围内的 Integer 实例使用自动装箱来创建，那么就会引用相同的对象。
 
