@@ -50,7 +50,7 @@
 
 ## :coffee: Java
 
-- [Java 基础](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20基础.md)
+- [Java 基础](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20%E5%9F%BA%E7%A1%80.md)
 - [Java 容器](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20容器.md)
 - [Java 并发](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20并发.md)
 - [Java 虚拟机](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20虚拟机.md)
