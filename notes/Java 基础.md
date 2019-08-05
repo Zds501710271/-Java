@@ -1226,6 +1226,8 @@ Throwable 可以用来表示任何可以作为异常抛出的类，分为两种�
 - [Java 异常的面试问题及答案 -Part 1](http://www.importnew.com/7383.html)
 
 # 九、泛型
+- 泛型，即“参数化类型”。
+	- 创建集合时就指定集合元素的类型，该集合只能保存其指定类型的元素，避免使用强制类型转换。
 
 ```java
 public class Box<T> {
@@ -1242,38 +1244,13 @@ public class Box<T> {
 # 十、注解
 
 Java 注解是附加在代码中的一些元信息，用于一些工具在编译、运行时进行解析和使用，起到说明、配置的功能。注解不会也不能影响代码的实际逻辑，仅仅起到辅助性的作用。
+- 『元注解』:是用于修饰注解的注解，通常用在注解的定义上
+- 常用注解(三个内置注解)：
+<div align="center"> <img src="pics/常用注解.png" width="600px"> </div><br>
 
 [注解 Annotation 实现原理与自定义注解例子](https://www.cnblogs.com/acm-bingzi/p/javaAnnotation.html)
 
 # 十一、特性
-
-## Java 各版本的新特性
-
-**New highlights in Java SE 8** 
-
-1. Lambda Expressions
-2. Pipelines and Streams
-3. Date and Time API
-4. Default Methods
-5. Type Annotations
-6. Nashhorn JavaScript Engine
-7. Concurrent Accumulators
-8. Parallel operations
-9. PermGen Error Removed
-
-**New highlights in Java SE 7** 
-
-1. Strings in Switch Statement
-2. Type Inference for Generic Instance Creation
-3. Multiple Exception Handling
-4. Support for Dynamic Languages
-5. Try with Resources
-6. Java nio Package
-7. Binary Literals, Underscore in literals
-8. Diamond Syntax
-
-- [Difference between Java 1.8 and Java 1.7?](http://www.selfgrowth.com/articles/difference-between-java-18-and-java-17)
-- [Java 8 特性](http://www.importnew.com/19345.html)
 
 ## Java 与 C++ 的区别
 
@@ -1292,19 +1269,6 @@ Java 注解是附加在代码中的一些元信息，用于一些工具在编译
 
 - JRE is the JVM program, Java application need to run on JRE.
 - JDK is a superset of JRE, JRE + tools for developing java programs. e.g, it provides the compiler "javac"
+- Java 运行时环境(JRE)。 它包括 Java 虚拟机、 Java 核心类库和支持文件。 它不包含开发工具（JDK） --编译器、 调试器和其他工具。
+- Java 开发工具包(JDK)是完整的 Java 软件开发包，包含了 JRE，编译器和其他的工具(比如：JavaDoc， Java 调试器)， 可以让开发者开发、 编译、 执行 Java 应用程序。
 
-# 参考资料
-
-- Eckel B. Java 编程思想[M]. 机械工业出版社, 2002.
-- Bloch J. Effective java[M]. Addison-Wesley Professional, 2017.
-
-
-
-
-# 微信公众号
-
-
-更多精彩内容将发布在微信公众号 CyC2018 上，你也可以在公众号后台和我交流学习和求职相关的问题。另外，公众号提供了该项目的 PDF 等离线阅读版本，后台回复 "下载" 即可领取。公众号也提供了一份技术面试复习大纲，不仅系统整理了面试知识点，而且标注了各个知识点的重要程度，从而帮你理清多而杂的面试知识点，后台回复 "大纲" 即可领取。我基本是按照这个大纲来进行复习的，对我拿到了 BAT 头条等 Offer 起到很大的帮助。你们完全可以和我一样根据大纲上列的知识点来进行复习，就不用看很多不重要的内容，也可以知道哪些内容很重要从而多安排一些复习时间。
-
-
-<br><div align="center"><img width="320px" src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/other/公众号海报6.png"></img></div>
