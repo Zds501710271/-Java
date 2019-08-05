@@ -211,16 +211,21 @@ String 不可变性天生具备线程安全，可以在多个线程中安全地�
 
 **1. 可变性** 
 
-- String 不可变
-- StringBuffer 和 StringBuilder 可变
+- String 不可变，private final char value[]
+- StringBuffer 和 StringBuilder 可变，继承自AbstractStringBuilder类，在AbstractStringBuilder中也是使用字符数组保存字符串，char[]
+value
 
 **2. 线程安全** 
 
 - String 不可变，因此是线程安全的
-- StringBuilder 不是线程安全的
+- StringBuilder 不是线程安全的，
 - StringBuffer 是线程安全的，内部使用 synchronized 进行同步
 
 [StackOverflow : String, StringBuffer, and StringBuilder](https://stackoverflow.com/questions/2971315/string-stringbuffer-and-stringbuilder)
+
+**3. 性能**  
+- String最慢。每次对String 类型进行改变的时候，都会生成一个新的String 对象，然后将指针指向新的String 对象
+- StringBuilder比StringBuffer快约10%~15%
 
 ## String Pool
 
@@ -266,43 +271,6 @@ public class NewStringTest {
     public static void main(String[] args) {
         String s = new String("abc");
     }
-}
-```
-
-使用 javap -verbose 进行反编译，得到以下内容：
-
-```java
-// ...
-Constant pool:
-// ...
-   #2 = Class              #18            // java/lang/String
-   #3 = String             #19            // abc
-// ...
-  #18 = Utf8               java/lang/String
-  #19 = Utf8               abc
-// ...
-
-  public static void main(java.lang.String[]);
-    descriptor: ([Ljava/lang/String;)V
-    flags: ACC_PUBLIC, ACC_STATIC
-    Code:
-      stack=3, locals=2, args_size=1
-         0: new           #2                  // class java/lang/String
-         3: dup
-         4: ldc           #3                  // String abc
-         6: invokespecial #4                  // Method java/lang/String."<init>":(Ljava/lang/String;)V
-         9: astore_1
-// ...
-```
-
-在 Constant Pool 中，#19 存储这字符串字面量 "abc"，#3 是 String Pool 的字符串对象，它指向 #19 这个字符串字面量。在 main 方法中，0: 行使用 new #2 在堆中创建一个字符串对象，并且使用 ldc #3 将 String Pool 中的字符串对象作为 String 构造函数的参数。
-
-以下是 String 构造函数的源码，可以看到，在将一个字符串对象作为另一个字符串对象的构造函数参数时，并不会完全复制 value 数组内容，而是都会指向同一个 value 数组。
-
-```java
-public String(String original) {
-    this.value = original.value;
-    this.hash = original.hash;
 }
 ```
 
