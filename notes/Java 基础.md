@@ -1,66 +1,52 @@
-Table of Contents
-=================
+<!-- TOC -->
 
-* [面向对象和面向过程](#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%92%8C%E9%9D%A2%E
-5%90%91%E8%BF%87%E7%A8%8B)
-  * [什么是面向过程](#%E4%BB%80%E4%B9%88%E6%98%AF%E9%9D%A2%E5%90%91%E8%BF%87%E7%
-A8%8B)
-  * [什么是面向对象](#%E4%BB%80%E4%B9%88%E6%98%AF%E9%9D%A2%E5%90%91%E5%AF%B9%E8%
-B1%A1)
-  * [面向对象的三个基本特征](#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B
-8%89%E4%B8%AA%E5%9F%BA%E6%9C%AC%E7%89%B9%E5%BE%81)
-  * [多态的理解](#%E5%A4%9A%E6%80%81%E7%9A%84%E7%90%86%E8%A7%A3)
-  * [super](#super)
-  * [重写和重载的区别。](#%E9%87%8D%E5%86%99%E5%92%8C%E9%87%8D%E8%BD%BD%E7%9A%84
-%E5%8C%BA%E5%88%AB)
-  * [为什么Java是单继承？](#%E4%B8%BA%E4%BB%80%E4%B9%88java%E6%98%AF%E5%8D%95%E7
-%BB%A7%E6%89%BF)
-  * [继承的好处和坏处](#%E7%BB%A7%E6%89%BF%E7%9A%84%E5%A5%BD%E5%A4%84%E5%92%8C%E
-5%9D%8F%E5%A4%84)
-  * [Java 中是否可以覆盖(override)一个 private 或者是 static 的方法？](#java-%E4
-%B8%AD%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E8%A6%86%E7%9B%96override%E4%B8%80%E4
-%B8%AA-private-%E6%88%96%E8%80%85%E6%98%AF-static-%E7%9A%84%E6%96%B9%E6%B3%95)
-  * [public,protected,private,以及默认](#publicprotectedprivate%E4%BB%A5%E5%8F%8
-A%E9%BB%98%E8%AE%A4)
-  * [接口和抽象类](#%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB)
-* [一、数据类型](#%E4%B8%80%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
-  * [基本类型和包装类型](#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%8C%85
-%E8%A3%85%E7%B1%BB%E5%9E%8B)
-  * [装箱/拆箱](#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1)
-  * [String 转出 int 型， 判断能不能转？ 如何转？](#string-%E8%BD%AC%E5%87%BA-in
-t-%E5%9E%8B-%E5%88%A4%E6%96%AD%E8%83%BD%E4%B8%8D%E8%83%BD%E8%BD%AC-%E5%A6%82%E4%
-BD%95%E8%BD%AC)
-  * [short s1 = 1; s1 = s1 \+ 1;有什么错? short s1 =1; s1 \+=1;有什么错?](#short
--s1--1-s1--s1--1%E6%9C%89%E4%BB%80%E4%B9%88%E9%94%99-short-s1-1-s1-1%E6%9C%89%E4
-%BB%80%E4%B9%88%E9%94%99)
-  * [Int 与 Integer 区别](#int-%E4%B8%8E-integer-%E5%8C%BA%E5%88%AB)
-  * [缓存池](#%E7%BC%93%E5%AD%98%E6%B1%A0)
-* [二、String](#%E4%BA%8Cstring)
-  * [概览](#%E6%A6%82%E8%A7%88)
-  * [不可变的好处](#%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%A5%BD%E5%A4%84)
-  * [String, StringBuffer and StringBuilder](#string-stringbuffer-and-stringbuil
-der)
-  * [String Pool](#string-pool)
-  * [new String("abc")](#new-stringabc)
-* [三、Object 通用方法](#%E4%B8%89object-%E9%80%9A%E7%94%A8%E6%96%B9%E6%B3%95)
-  * [概览](#%E6%A6%82%E8%A7%88-1)
-  * [equals()](#equals)
-  * [hashCode()](#hashcode)
-  * [toString()](#tostring)
-  * [clone()](#clone)
-* [六、关键字](#%E5%85%AD%E5%85%B3%E9%94%AE%E5%AD%97)
-  * [final](#final)
-  * [static](#static)
-* [七、反射](#%E4%B8%83%E5%8F%8D%E5%B0%84)
-* [八、异常](#%E5%85%AB%E5%BC%82%E5%B8%B8)
-* [九、泛型](#%E4%B9%9D%E6%B3%9B%E5%9E%8B)
-* [十、注解](#%E5%8D%81%E6%B3%A8%E8%A7%A3)
-* [十一、特性](#%E5%8D%81%E4%B8%80%E7%89%B9%E6%80%A7)
-  * [Java 与 C\+\+ 的区别](#java-%E4%B8%8E-c-%E7%9A%84%E5%8C%BA%E5%88%AB)
-  * [JRE or JDK](#jre-or-jdk)
+- [面向对象和面向过程](#面向对象和面向过程)
+    - [什么是面向过程](#什么是面向过程)
+    - [什么是面向对象](#什么是面向对象)
+    - [面向对象的三个基本特征](#面向对象的三个基本特征)
+    - [多态的理解](#多态的理解)
+    - [super](#super)
+    - [重写和重载的区别。](#重写和重载的区别)
+    - [为什么Java是单继承？](#为什么java是单继承)
+    - [继承的好处和坏处](#继承的好处和坏处)
+    - [Java 中是否可以覆盖(override)一个 private 或者是 static 的方法？](#java-中是否可以覆盖override一个-private-或者是-static-的方法)
+    - [public,protected,private,以及默认](#publicprotectedprivate以及默认)
+    - [接口和抽象类](#接口和抽象类)
+- [一、数据类型](#一数据类型)
+    - [基本类型和包装类型](#基本类型和包装类型)
+    - [装箱/拆箱](#装箱拆箱)
+    - [String 转出 int 型， 判断能不能转？ 如何转？](#string-转出-int-型-判断能不能转-如何转)
+    - [short s1 = 1; s1 = s1 + 1;有什么错? short s1 =1; s1 +=1;有什么错?](#short-s1--1-s1--s1--1有什么错-short-s1-1-s1-1有什么错)
+    - [Int 与 Integer 区别](#int-与-integer-区别)
+    - [缓存池](#缓存池)
+- [二、String](#二string)
+    - [概览](#概览)
+    - [不可变的好处](#不可变的好处)
+    - [String, StringBuffer and StringBuilder](#string-stringbuffer-and-stringbuilder)
+    - [String Pool](#string-pool)
+    - [new String("abc")](#new-stringabc)
+- [三、Object 通用方法](#三object-通用方法)
+    - [概览](#概览-1)
+    - [equals()](#equals)
+    - [hashCode()](#hashcode)
+    - [toString()](#tostring)
+    - [clone()](#clone)
+- [六、关键字](#六关键字)
+    - [final](#final)
+    - [static](#static)
+- [七、反射](#七反射)
+- [八、异常](#八异常)
+- [九、泛型](#九泛型)
+- [十、注解](#十注解)
+- [十一、特性](#十一特性)
+    - [Java 与 C++ 的区别](#java-与-c-的区别)
+    - [JRE or JDK](#jre-or-jdk)
+
+<!-- /TOC -->
 
 
 # 面向对象和面向过程
+
 ## 什么是面向过程
 - 就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候一个一个依次调用就可以了。
 - 优点：性能比面向对象高，因为类调用时需要实例化，开销比较大，比较消耗资源;比如单片机、嵌入式开发、 Linux/Unix等一般采用面向过程开发，性能是最重要的因素。 
