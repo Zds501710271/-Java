@@ -20,62 +20,62 @@
 
 ## :pencil2: 算法
 
-- [剑指 Offer 题解](https://github.com/CyC2018/CS-Notes/blob/master/notes/剑指%20Offer%20题解%20-%20目录.md)
-- [Leetcode 题解](https://github.com/CyC2018/CS-Notes/blob/master/notes/Leetcode%20题解%20-%20目录.md)
-- [算法](https://github.com/CyC2018/CS-Notes/blob/master/notes/算法%20-%20目录.md)
+- [剑指 Offer 题解](https://github.com/Zds501710271/-Java/blob/master/notes/%E5%89%91%E6%8C%87%20offer%20%E9%A2%98%E8%A7%A3.md)
+- [Leetcode 题解](https://github.com/Zds501710271/-Java/blob/master/notes/Leetcode%20%E9%A2%98%E8%A7%A3.md)
+- [算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95.md)
 
 ## :computer: 操作系统
 
-- [计算机操作系统](https://github.com/CyC2018/CS-Notes/blob/master/notes/计算机操作系统%20-%20目录.md)
-- [Linux](https://github.com/CyC2018/CS-Notes/blob/master/notes/Linux.md)
+- [计算机操作系统](https://github.com/Zds501710271/-Java/blob/master/notes/计算机操作系统%20-%20目录.md)
+- [Linux](https://github.com/Zds501710271/-Java/blob/master/notes/Linux.md)
 
 ## :cloud: 网络 
 
-- [计算机网络](https://github.com/CyC2018/CS-Notes/blob/master/notes/计算机网络%20-%20目录.md)
-- [HTTP](https://github.com/CyC2018/CS-Notes/blob/master/notes/HTTP.md)
-- [Socket](https://github.com/CyC2018/CS-Notes/blob/master/notes/Socket.md)
+- [计算机网络](https://github.com/Zds501710271/-Java/blob/master/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md)
+- [HTTP](https://github.com/Zds501710271/-Java/blob/master/notes/HTTP.md)
+- [Socket](https://github.com/Zds501710271/-Java/blob/master/notes/Socket.md)
 
 ## :art: 面向对象
 
-- [设计模式](https://github.com/CyC2018/CS-Notes/blob/master/notes/设计模式.md)
-- [面向对象思想](https://github.com/CyC2018/CS-Notes/blob/master/notes/面向对象思想.md)
+- [设计模式](https://github.com/Zds501710271/-Java/blob/master/notes/设计模式.md)
+- [面向对象思想](https://github.com/Zds501710271/-Java/blob/master/notes/面向对象思想.md)
 
 ## :floppy_disk: 数据库
 
-- [数据库系统原理](https://github.com/CyC2018/CS-Notes/blob/master/notes/数据库系统原理.md)
-- [SQL](https://github.com/CyC2018/CS-Notes/blob/master/notes/SQL.md)
-- [Leetcode-Database 题解](https://github.com/CyC2018/CS-Notes/blob/master/notes/Leetcode-Database%20题解.md)
-- [MySQL](https://github.com/CyC2018/CS-Notes/blob/master/notes/MySQL.md)
-- [Redis](https://github.com/CyC2018/CS-Notes/blob/master/notes/Redis.md)
+- [数据库系统原理](https://github.com/Zds501710271/-Java/blob/master/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86.md)
+- [SQL](https://github.com/Zds501710271/-Java/blob/master/notes/SQL.md)
+- [Leetcode-Database 题解](https://github.com/Zds501710271/-Java/blob/master/notes/Leetcode-Database%20题解.md)
+- [MySQL](https://github.com/Zds501710271/-Java/blob/master/notes/MySQL.md)
+- [Redis](https://github.com/Zds501710271/-Java/blob/master/notes/Redis.md)
 
 ## :coffee: Java
 
 - [Java 基础](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20%E5%9F%BA%E7%A1%80.md)
-- [Java 容器](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20容器.md)
-- [Java 并发](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20并发.md)
-- [Java 虚拟机](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20虚拟机.md)
-- [Java I/O](https://github.com/CyC2018/CS-Notes/blob/master/notes/Java%20IO.md)
+- [Java 容器](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20%E5%AE%B9%E5%99%A8.md)
+- [Java 并发](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20%E5%B9%B6%E5%8F%91.md)
+- [Java 虚拟机](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20%E8%99%9A%E6%8B%9F%E6%9C%BA.md)
+- [Java I/O](https://github.com/Zds501710271/-Java/blob/master/notes/Java%20IO.md)
 
 ## :bulb: 系统设计 
 
-- [系统设计基础](https://github.com/CyC2018/CS-Notes/blob/master/notes/系统设计基础.md)
-- [分布式](https://github.com/CyC2018/CS-Notes/blob/master/notes/分布式.md)
-- [集群](https://github.com/CyC2018/CS-Notes/blob/master/notes/集群.md)
-- [攻击技术](https://github.com/CyC2018/CS-Notes/blob/master/notes/攻击技术.md)
-- [缓存](https://github.com/CyC2018/CS-Notes/blob/master/notes/缓存.md)
-- [消息队列](https://github.com/CyC2018/CS-Notes/blob/master/notes/消息队列.md)
+- [系统设计基础](https://github.com/Zds501710271/-Java/blob/master/notes/系统设计基础.md)
+- [分布式](https://github.com/Zds501710271/-Java/blob/master/notes/分布式.md)
+- [集群](https://github.com/Zds501710271/-Java/blob/master/notes/集群.md)
+- [攻击技术](https://github.com/Zds501710271/-Java/blob/master/notes/攻击技术.md)
+- [缓存](https://github.com/Zds501710271/-Java/blob/master/notes/缓存.md)
+- [消息队列](https://github.com/Zds501710271/-Java/blob/master/notes/消息队列.md)
 
 ## :wrench: 工具 
 
-- [Git](https://github.com/CyC2018/CS-Notes/blob/master/notes/Git.md)
-- [Docker](https://github.com/CyC2018/CS-Notes/blob/master/notes/Docker.md)
-- [构建工具](https://github.com/CyC2018/CS-Notes/blob/master/notes/构建工具.md)
-- [正则表达式](https://github.com/CyC2018/CS-Notes/blob/master/notes/正则表达式.md)
+- [Git](https://github.com/Zds501710271/-Java/blob/master/notes/Git.md)
+- [Docker](https://github.com/Zds501710271/-Java/blob/master/notes/Docker.md)
+- [构建工具](https://github.com/Zds501710271/-Java/blob/master/notes/构建工具.md)
+- [正则表达式](https://github.com/Zds501710271/-Java/blob/master/notes/正则表达式.md)
 
 ## :watermelon: 编码实践 
 
-- [代码可读性](https://github.com/CyC2018/CS-Notes/blob/master/notes/代码可读性.md)
-- [代码风格规范](https://github.com/CyC2018/CS-Notes/blob/master/notes/代码风格规范.md)
+- [代码可读性](https://github.com/Zds501710271/-Java/blob/master/notes/代码可读性.md)
+- [代码风格规范](https://github.com/Zds501710271/-Java/blob/master/notes/代码风格规范.md)
 
 ## :memo: 后记
 
@@ -95,13 +95,6 @@
 - 绘图：[draw.io](https://www.draw.io/)
 - Logo：[logomakr](https://logomakr.com/)
 
-### 微信公众号
-
-更多精彩内容将发布在微信公众号 CyC2018 上，你也可以在公众号后台和我交流学习和求职相关的问题。另外，公众号提供了该项目的 PDF 等离线阅读版本，后台回复 "下载" 即可领取。公众号也提供了一份技术面试复习大纲，不仅系统整理了面试知识点，而且标注了各个知识点的重要程度，从而帮你理清多而杂的面试知识点，后台回复 "大纲" 即可领取。我基本是按照这个大纲来进行复习的，对我拿到了 BAT 头条等 Offer 起到很大的帮助。你们完全可以和我一样根据大纲上列的知识点来进行复习，就不用看很多不重要的内容，也可以知道哪些内容很重要从而多安排一些复习时间。
-
-<br>
-
-<div align="center"><img width="300px" src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/other/公众号海报6.png"></img></div>
 
 ### 排版
 
@@ -117,51 +110,4 @@
 
 GFM 转换工具：[GFM-Converter](https://github.com/CyC2018/GFM-Converter)。
 
-### License
 
-本仓库内容 **不是** 将网上的资料随意拼凑而来，除了少部分引用书上和技术文档的原文，其余都是我的原创。在您引用本仓库内容或者对内容进行修改演绎时，请署名并以相同方式共享，谢谢。
-
-转载文章请在开头明显处标明该页面地址，公众号等其它转载请联系 zhengyc101@163.com。
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>
-
-### 致谢
-
-感谢以下人员对本仓库做出的贡献，当然不仅仅只有这些贡献者，这里就不一一列举了。如果你希望被添加到这个名单中，并且提交过 Issue 或者 PR，请与我联系。
-
-<a href="https://github.com/linw7">
-    <img src="https://avatars3.githubusercontent.com/u/21679154?s=400&v=4" width="50px">
-</a> 
-<a href="https://github.com/g10guang">
-    <img src="https://avatars1.githubusercontent.com/u/18458140?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/Sctwang">
-    <img src="https://avatars3.githubusercontent.com/u/33345444?s=400&v=4" width="50px">
-</a> 
-<a href="https://github.com/ResolveWang">
-    <img src="https://avatars1.githubusercontent.com/u/8018776?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/crossoverJie">
-    <img src="https://avatars1.githubusercontent.com/u/15684156?s=400&v=4" width="50px">
-</a> 
-<a href="https://github.com/jy03078584">
-    <img src="https://avatars2.githubusercontent.com/u/7719370?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/kwongtailau">
-    <img src="https://avatars0.githubusercontent.com/u/22954582?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/xiangflight">
-    <img src="https://avatars2.githubusercontent.com/u/10072416?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/mafulong">
-    <img src="https://avatars1.githubusercontent.com/u/24795000?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/yanglbme">
-    <img src="https://avatars1.githubusercontent.com/u/21008209?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/OOCZC">
-    <img src="https://avatars1.githubusercontent.com/u/11623828?s=400&v=4" width="50px">
-</a>
-<a href="https://github.com/5renyuebing">
-    <img src="https://avatars1.githubusercontent.com/u/32872430?s=400&v=4" width="50px">
-</a>
