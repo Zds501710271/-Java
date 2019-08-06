@@ -41,6 +41,13 @@
 - [十一、特性](#十一特性)
     - [Java 与 C++ 的区别](#java-与-c-的区别)
     - [JRE or JDK](#jre-or-jdk)
+- [其他](#其他)
+    - [map，list，set区别](#maplistset区别)
+    - [comparable接口和comparator接口](#comparable接口和comparator接口)
+    - [ThreadLocal](#threadlocal)
+    - [finalize finalization finally](#finalize-finalization-finally)
+    - [值传递与引用传递](#值传递与引用传递)
+    - [四种引用](#四种引用)
 
 <!-- /TOC -->
 
@@ -1276,4 +1283,389 @@ Java 注解是附加在代码中的一些元信息，用于一些工具在编译
 - JDK is a superset of JRE, JRE + tools for developing java programs. e.g, it provides the compiler "javac"
 - Java 运行时环境(JRE)。 它包括 Java 虚拟机、 Java 核心类库和支持文件。 它不包含开发工具（JDK） --编译器、 调试器和其他工具。
 - Java 开发工具包(JDK)是完整的 Java 软件开发包，包含了 JRE，编译器和其他的工具(比如：JavaDoc， Java 调试器)， 可以让开发者开发、 编译、 执行 Java 应用程序。
+
+# 其他
+## map，list，set区别
+- List：
+    - 1.可以允许重复的对象。
+    - 2.可以插入多个null元素。
+    - 3.是一个有序容器，保持了每个元素的插入顺序，输出的顺序就是插入的顺序。
+    - 4.常用的实现类有 ArrayList、LinkedList 和 Vector。ArrayList 最为流行，它提供了使用索引的随意访问，而 LinkedList 则对于经常需要从 List 中添加或删除元素的场合更为合适。
+    
+- Set：
+    - 1.不允许重复对象
+    - 2. 无序容器，你无法保证每个元素的存储顺序，TreeSet通过 Comparator  或者 Comparable 维护了一个排序顺序。
+    - 3. 只允许一个 null 元素
+    - 4.Set 接口最流行的几个实现类是 HashSet、LinkedHashSet 以及 TreeSet。最流行的是基于 HashMap 实现的 HashSet；TreeSet 还实现了 SortedSet 接口，因此 TreeSet 是一个根据其 compare() 和 compareTo() 的定义进行排序的有序容器。
+
+- Map:
+    - 1.Map不是collection的子接口或者实现类。Map是一个接口。
+    - 2.Map 的 每个 Entry 都持有两个对象，也就是一个键一个值，Map 可能会持有相同的值对象但键对象必须是唯一的。
+    - 3. TreeMap 也通过 Comparator  或者 Comparable 维护了一个排序顺序。
+    - 4. Map 里你可以拥有随意个 null 值但最多只能有一个 null 键。
+    - 5.Map 接口最流行的几个实现类是 HashMap、LinkedHashMap、Hashtable 和 TreeMap。（HashMap、TreeMap最常用）
+
+- 什么场景下使用list，set，map呢？（或者会问为什么这里要用list、或者set、map，这里回答它们的优缺点就可以了）
+    - 如果你经常会使用索引来对容器中的元素进行访问，那么 List 是你的正确的选择。如果你已经知道索引了的话，那么 List 的实现类比如 ArrayList 可以提供更快速的访问,如果经常添加删除元素的，那么肯定要选择LinkedList。
+    - 如果你想容器中的元素能够按照它们插入的次序进行有序存储，那么还是 List，因为 List 是一个有序容器，它按照插入顺序进行存储。
+    - 如果你想保证插入元素的唯一性，也就是你不想有重复值的出现，那么可以选择一个 Set 的实现类，比如 HashSet、LinkedHashSet 或者 TreeSet。所有 Set 的实现类都遵循了统一约束比如唯一性，而且还提供了额外的特性比如 TreeSet 还是一个 SortedSet，所有存储于 TreeSet 中的元素可以使用 Java 里的 Comparator 或者 Comparable 进行排序。LinkedHashSet 也按照元素的插入顺序对它们进行存储。
+    - 如果你以键和值的形式进行数据存储那么 Map 是你正确的选择。你可以根据你的后续需要从 Hashtable、HashMap、TreeMap 中进行选择。
+
+## comparable接口和comparator接口
+- Comparable和Comparator都是接口，都是用来比较和排序的
+- Comparable是在集合内部定义的方法实现的排序，位于java.lang下。
+- Comparator是在集合外部实现的排序，位于java.util下。
+- 实现Comparable接口需要覆盖compareTo方法，实现Comparator接口需要覆盖compare方法。
+
+- Comparable是一个对象本身就已经支持自比较所需要实现的接口，如String、Integer自己就实现了Comparable接口，可完成比较大小操作。自定义类要在加入list容器中后能够排序，也可以实现Comparable接口，在用Collections类的sort方法排序时若不指定Comparator，那就以自然顺序排序。所谓自然顺序就是实现Comparable接口设定的排序方式。
+- Comparator是一个专用的比较器，当这个对象不支持自比较或者自比较函数不能满足要求时，可写一个比较器来完成两个对象之间大小的比较。Comparator体现了一种策略模式(strategy design pattern)，就是不改变对象自身，而用一个策略对象(strategy object)来改变它的行为。
+- 总而言之Comparable是自已完成比较，Comparator是外部程序实现比较。
+
+- 1. Comparator 和 Comparable 相同的地方
+
+    - 他们都是java的一个接口, 并且是用来对自定义的class比较大小的,
+        - 什么是自定义class: 如 public class Person{ String name; int age }.
+        - 当我们有这么一个personList,里面包含了person1, person2, persion3....., 我们用Collections.sort( personList ), 是得不到预期的结果的. 这时肯定有人要问, 那为什么可以排序一个字符串list呢:如 StringList{"hello1" , "hello3" , "hello2"}, Collections.sort( stringList ) 能够得到正确的排序, 那是因为 String 这个对象已经帮我们实现了 Comparable接口 , 所以我们的 Person 如果想排序, 也要实现一个比较器。
+        
+- 2. Comparator 和 Comparable 的区别
+
+    - Comparable
+        - Comparable 定义在 Person类的内部:public class Persion implements Comparable {..比较Person的大小..},
+        - 因为已经实现了比较器,那么我们的Person现在是一个可以比较大小的对象了,它的比较功能和String完全一样,可以随时随地的拿来比较大小,因为Person现在自身就是有大小之分的。Collections.sort(personList)可以得到正确的结果。
+
+    - Comparator
+        - Comparator 是定义在Person的外部的, 此时我们的Person类的结构不需要有任何变化,如 public class Person{ String name; int age },
+        - 然后我们另外定义一个比较器:public PersonComparator implements Comparator() {..比较Person的大小..},
+        - 在PersonComparator里面实现了怎么比较两个Person的大小. 所以,用这种方法,当我们要对一个 personList进行排序的时候, 我们除了了要传递personList过去, 还需要把PersonComparator传递过去,因为怎么比较Person的大小是在PersonComparator里面实现的, 如:Collections.sort( personList , new PersonComparator() ).   
+
+- 3.实例
+``` java 多条件排序
+1.Comparable
+
+public class Person implements Comparable<Person> {
+	private String name;
+	private int age;
+ 
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+    public String getName() {
+		return name;
+	}
+ 
+	public void setName(String name) {
+		this.name = name;
+	}
+ 
+	public int getAge() {
+		return age;
+	}
+ 
+	public void setAge(int age) {
+		this.age = age;
+	}
+ 
+	/**
+	 * 实现Comparable接口，在类的内部实现比较逻辑，通过覆盖compareTo方法，如此一来，自定义的两个类可以比较大小
+	 * 将自定义的类放在集合类中，可以使用Collections的sort来自然排序，不用提供比较器。自然排序的实现即compareTo方法
+	 */
+	@Override
+	public int compareTo(Person anotherPerson) {
+		// 先比较name的大小，若一样再
+        // 使用字符串的比较
+		int flag = name.compareTo(anotherPerson.getName());
+		if(flag == 0) {
+			// 名字相等，则比较年龄
+			return age - anotherPerson.getAge();
+			
+		} else {
+			// 名字不一样，返回名字比较结果
+			return flag;
+		}
+    }
+}
+public static void main(String[] args) {
+	List<Person> list = new ArrayList<Person>();
+	list.add(new Person("zhangsan", 45));
+	list.add(new Person("lisi", 34));
+	System.out.println("初始列表：");
+	for(Person person : list) {
+		System.out.print(person + "\t");
+	}
+	System.out.println();
+	System.out.println("排序后：");
+	Collections.sort(list);
+	for(Person person : list) {
+		System.out.print(person + "\t");
+	}
+}
+
+2.Comparator
+public class Person{
+	private String name;
+	private int age;
+ 
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+    public String getName() {
+		return name;
+	}
+ 
+	public void setName(String name) {
+		this.name = name;
+	}
+ 
+	public int getAge() {
+		return age;
+	}
+ 
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+}
+
+public class PersonComparator implements Comparator<Person>{
+    @Override
+	public int compare(Person person1, Person person2) {
+		// 先比较name的大小，若一样再比较age的大小
+		
+		// 使用字符串的比较
+		int flag = person1.getName().compareTo(person2.getName());
+		if(flag == 0) {
+			// 名字相等，则比较年龄
+			return person1.getAge() - person2.getAge();
+			
+		} else {
+			// 名字不一样，返回名字比较结果
+			return flag;
+		}
+	}
+}
+public static void main(String[] args) {
+	List<Person> list = new ArrayList<Person>();
+	list.add(new Person("zhangsan", 45));
+	list.add(new Person("lisi", 34));
+	System.out.println("初始列表：");
+	for(Person person : list) {
+		System.out.print(person + "\t");
+	}
+	System.out.println();
+	System.out.println("排序后：");
+	Collections.sort(list,new PersonComparator());
+	for(Person person : list) {
+		System.out.print(person + "\t");
+	}
+}
+```
+- Comparator单一条件排序:
+```java
+public static void main(String[] args) {
+	List<Person> list = new ArrayList<Person>();
+	list.add(new Person("zhangsan", 45));
+	list.add(new Person("lisi", 34));
+
+	Collections.sort(list,new PersonComparator<Person>(){
+        @override
+        public int compare(Person p1,Person p2){
+            //升序
+            第一种： return p1.getAge()-p2.getAge();
+            第二种： return p1.getAge().compateTo(p2.getAge()); 
+            //降序
+            第一种： return p2.getAge()-p1.getAge();
+            第二种： return p2.getAge().compateTo(p1.getAge()); 
+        }
+    });
+	for(Person person : list) {
+		System.out.print(person + "\t");
+	}
+}
+
+```
+- Comparator自定义条件排序:
+```java
+        String[] order = {"语文","数学","英语","物理","化学","生物","政治","历史","地理","总分"};
+		final List<String> definedOrder = Arrays.asList(order);
+		List<String> list = new ArrayList<String>(){
+			{
+				add("总分");
+				add("英语");
+				add("政治");
+				add("总分");
+				add("数学");
+			}
+		};
+	    Collections.sort(list,new Comparator<String>() {//第一种方式：
+
+			@Override
+			public int compare(String o1, String o2) {
+				int io1 = definedOrder .indexOf(o1);
+				int io2 = definedOrder .indexOf(o2);
+				return io1-io2;
+			}
+		});
+		//第二种方式：使用lambda表达式简化代码:
+        Collections.sort(list, (o1, o2)->(definedOrder .indexOf(o1)-definedOrder .indexOf(o2)));
+        
+		for(String s:list){
+			System.out.print(s+"   ");
+		}
+        //输出结果为：数学 英语 政治 总分 总分
+
+```
+
+## ThreadLocal
+- ThreadLocal是什么
+    - 首先，它是一个数据结构，工具类。
+    - 内部包含一个ThreadLocalMap类，该类为Thread类的一个局部变量，该Map存储的key为ThreadLocal对象自身，value为我们要存储的对象，这样一来，在不同线程中，持有的其实都是当前线程的变量副本，与其他线程完全隔离，以此来保证线程执行过程中不受其他线程的影响。
+    - 源码分析
+    ```java
+        ThreadLocal<String> localName = new ThreadLocal();
+        localName.set("占小狼");
+        String name = localName.get();
+        //在线程1中初始化了一个ThreadLocal对象localName，并通过set方法，保存了一个值占小狼，同时在线程1中通过localName.get()可以拿到之前设置的值，但是如果在线程2中，拿到的将是一个null。
+        set()源码
+        public void set(T value) {
+            Thread t = Thread.currentThread();
+            ThreadLocalMap map = getMap(t);
+            if (map != null)
+                map.set(this, value);
+            else
+                createMap(t, value);
+        }
+
+        get()源码
+        public T get() {
+            Thread t = Thread.currentThread();
+            ThreadLocalMap map = getMap(t);
+            if (map != null) {
+                ThreadLocalMap.Entry e = map.getEntry(this);
+                if (e != null) {
+                    @SuppressWarnings("unchecked")
+                    T result = (T)e.value;
+                    return result;
+                }
+            }
+            return setInitialValue();
+        }
+        //threadLocals变量
+        ThreadLocalMap getMap(Thread t) {
+             return t.threadLocals;
+        }
+    
+    ```
+    - 可以发现，每个线程中都有一个ThreadLocalMap数据结构，当执行set方法时，其值是保存在当前线程的threadLocals变量中，当执行get方法中，是从当前线程的threadLocals变量获取。
+
+- ThreadLocal的接口方法
+    - void set(Object value)设置当前线程的线程局部变量的值。
+    - public Object get()该方法返回当前线程所对应的线程局部变量。
+    - public void remove()将当前线程局部变量的值删除，目的是为了减少内存的占用，该方法是JDK 5.0新增的方法。需要指出的是，当线程结束后，对应该线程的局部变量将自动被垃圾回收，所以显式调用该方法清除线程的局部变量并不是必须的操作，但它可以加快内存回收的速度。
+    - protected Object initialValue()返回该线程局部变量的初始值，该方法是一个protected的方法，显然是为了让子类覆盖而设计的。这个方法是一个延迟调用方法，在线程第1次调用get()或set(Object)时才执行，并且仅执行1次。ThreadLocal中的缺省实现直接返回一个null。
+
+- 底层原理
+    - 主要是存有一个ThreadLocalMap，以线程作为key，泛型作为value，可以理解为线程级别的缓存。每一个线程都会获得一个单独的map。这样一来，在不同线程中，持有的其实都是当前线程的变量副本，与其他线程完全隔离，以此来保证线程执行过程中不受其他线程的影响。
+
+        - 从名字上看，可以猜到它也是一个类似HashMap的数据结构，但是在ThreadLocal中，并没实现Map接口。
+        - 在ThreadLoalMap中，也是初始化一个大小16的Entry数组，Entry对象用来保存每一个key-value键值对，只不过这里的key永远都是ThreadLocal对象，是不是很神奇，通过ThreadLocal对象的set方法，结果把ThreadLocal对象自己当做key，放进了ThreadLoalMap中。
+        <div align="center"> <img src="pics/ThreadLocalMap结构.png" width="600px"> </div><br>
+        - 这里需要注意的是，ThreadLoalMap的Entry是继承WeakReference，和HashMap很大的区别是，Entry中没有next字段，所以就不存在链表的情况了。
+
+        - hash冲突
+            - 每个ThreadLocal对象都有一个hash值threadLocalHashCode，每初始化一个ThreadLocal对象，hash值就增加一个固定的大小0x61c88647。
+            - 在插入过程中，根据ThreadLocal对象的hash值，定位到table中的位置i，过程如下：
+                - 1、如果当前位置是空的，那么正好，就初始化一个Entry对象放在位置i上；
+                - 2、不巧，位置i已经有Entry对象了，如果这个Entry对象的key正好是即将设置的key，那么重新设置Entry中的value；
+                - 3、很不巧，位置i的Entry对象，和即将设置的key没关系，那么只能找下一个空位置；
+            - 这样的话，在get的时候，也会根据ThreadLocal对象的hash值，定位到table中的位置，然后判断该位置Entry对象中的key是否和get的key一致，如果不一致，就判断下一个位置
+            - 可以发现，set和get如果冲突严重的话，效率很低，因为ThreadLoalMap是Thread的一个属性，所以即使在自己的代码中控制了设置的元素个数，但还是不能控制其它代码的行为。
+
+- 内存泄漏
+    - 在ThreadLocalMap的实现中，key被保存到了WeakReference对象中。
+    - 这就导致了一个问题，ThreadLocal在没有外部强引用时，发生GC时会被回收，如果创建ThreadLocal的线程一直持续运行，那么这个Entry对象中的value就有可能一直得不到回收，发生内存泄露。
+- 如何避免内存泄露
+    - 既然已经发现有内存泄露的隐患，自然有应对的策略，在调用ThreadLocal的get()、set()可能会清除ThreadLocalMap中key为null的Entry对象，这样对应的value就没有GC Roots可达了，下次GC的时候就可以被回收，当然如果调用remove方法，肯定会删除对应的Entry对象。
+    - 如果使用ThreadLocal的set方法之后，没有显示的调用remove方法，就有可能发生内存泄露，所以养成良好的编程习惯十分重要，使用完ThreadLocal之后，记得调用remove方法。
+
+- 和Thread同步机制的比较
+    - 在同步机制中，通过对象的锁机制保证同一时间只有一个线程访问变量。这时该变量是多个线程共享的，使用同步机制要求程序慎密地分析什么时候对变量进行读写，什么时候需要锁定某个对象，什么时候释放对象锁等繁杂的问题，程序设计和编写难度相对较大。
+    - 而ThreadLocal则从另一个角度来解决多线程的并发访问。ThreadLocal会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，从而也就没有必要对该变量进行同步了。ThreadLocal提供了线程安全的共享对象，在编写多线程代码时，可以把不安全的变量封装进ThreadLocal。
+    - 概括起来说，对于多线程资源共享的问题，同步机制采用了“以时间换空间”的方式，而ThreadLocal采用了“以空间换时间”的方式。前者仅提供一份变量，让不同的线程排队访问，而后者为每一个线程都提供了一份变量，因此可以同时访问而互不影响。
+
+- Spring中采用ThreadLocal解决线程安全的问题
+
+    - 我们知道一般情况下，只有无状态的bean才可以在多线程环境下共享，在spring中绝大多数的bean都可以声明为singleton作用域。就是因为spring对一些非线程安全的“状态性对象”采用了ThreadLocal进行封装，让它们成为线程安全的对象，因此有状态的bean就可能以singleton的方式在多线程中正常工作了。
+    - 下面的实例能够体现spring对有状态bean的改造思路：
+        ```java
+        public class TopicDao {
+            private Connection conn;
+            public void addTopic(){
+            Statement stat = conn.createStatement();
+        ...
+            }
+        }
+        上面代码由于conn是非线程安全的成员变量，因此addTopic方法是非线程安全的。下面使用ThreadLocal对该变量进行改造，使之变成线程安全的变量：
+        public class TopicDao {
+            private static ThreadLocal<Connection> connThreadLocal = new ThreadLocal<Connection>();
+            private static Connection getConnection(){
+                if(connThreadLocal.get()==null){
+                    Connection conn = ConnectionManager.getConnection();
+                    connThreadLocal.set(conn);
+                    return conn;
+                }else{
+                    return connThreadLocal.get();
+                }
+            }
+            public void addTopic(){
+                Statement stat = getConnection.createStatement();
+            ...
+            }
+        }
+        ```
+    
+
+## finalize finalization finally
+- finally
+    - finally 关键字是对 Java 异常处理模型的最佳补充。finally 结构使代码总会执行，而不管有无异常发生。使用 finally 可以维护对象的内部状态，并可以清理非内存资源。 如果没有 finally，您的代码就会很费解。
+    ``` java
+    
+        public class WithoutFinally
+        {
+            public void foo() throws IOException
+            {
+                //在任一个空闲的端口上创建一个套接字
+                ServerSocket ss = new ServerSocket(0);
+                try 
+                {
+                    Socket socket = ss.accept(); //此处的其他代码...
+                }
+                catch (IOException e) 
+                {
+                    ss.close();                                              //1
+                    throw e;
+                }
+                //...
+                ss.close();                                                //2
+            }
+　      }
+        这段代码创建了一个套接字，并调用 accept 方法。在退出该方法之前，您必须关闭此套接字，以避免资源漏洞。为了完成这一任务，我们在 //2 处调用 close，它是该方法的最后一条语句。但是，如果 try 块中发生一个异常会怎么样呢？在这种情况下，//2 处的 close 调用永远不会发生。因此，您必须捕获这个异常，并在重新发出这个异常之前在 //1 处插入对 close 的另一个调用。这样就可以确保在退出该方法之前关闭套接字。
+    ```
+
+
+## 值传递与引用传递
+
+
+## 四种引用
+
+- 强引用（Strong Reference）、软引用（Soft Reference）、弱引用（Weak Reference）、虚引用（Phantom Reference）4 种，这 4 种引用的强度依次减弱。
+    - 强引用
+	    - Java中默认声明的就是强引用，只要强引用存在，垃圾回收器将永远不会回收被引用的对象，哪怕内存不足时，JVM也会直接抛出OutOfMemoryError，不会去回收。如果想中断强引用与对象之间的联系，可以显示的将强引用赋值为null，这样一来，JVM就可以适时的回收对象了
+    - 软引用
+	    - 软引用是用来描述一些非必需但仍有用的对象。在内存足够的时候，软引用对象不会被回收，只有在内存不足时，系统则会回收软引用对象，如果回收了软引用对象之后仍然没有足够的内存，才会抛出内存溢出异常。这种特性常常被用来实现缓存技术，比如网页缓存，图片缓存等。在 JDK1.2 之后，用java.lang.ref.SoftReference类来表示软引用。
+    - 弱引用
+	    - 弱引用的引用强度比软引用要更弱一些，无论内存是否足够，只要 JVM 开始进行垃圾回收，那些被弱引用关联的对象都会被回收。在 JDK1.2 之后，用 java.lang.ref.WeakReference 来表示弱引用。
+    - 虚引用
+	    - 虚引用是最弱的一种引用关系，如果一个对象仅持有虚引用，那么它就和没有任何引用一样，它随时可能会被回收，在 JDK1.2 之后，用 PhantomReference 类来表示，通过查看这个类的源码，发现它只有一个构造函数和一个 get() 方法，而且它的 get() 方法仅仅是返回一个null，也就是说将永远无法通过虚引用来获取对象，虚引用必须要和 ReferenceQueue 引用队列一起使用。
 

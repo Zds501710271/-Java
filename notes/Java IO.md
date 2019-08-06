@@ -1,34 +1,207 @@
-<!-- GFM-TOC -->
-* [一、概览](#一概览)
-* [二、磁盘操作](#二磁盘操作)
-* [三、字节操作](#三字节操作)
-    * [实现文件复制](#实现文件复制)
-    * [装饰者模式](#装饰者模式)
-* [四、字符操作](#四字符操作)
-    * [编码与解码](#编码与解码)
-    * [String 的编码方式](#string-的编码方式)
-    * [Reader 与 Writer](#reader-与-writer)
-    * [实现逐行输出文本文件的内容](#实现逐行输出文本文件的内容)
-* [五、对象操作](#五对象操作)
-    * [序列化](#序列化)
-    * [Serializable](#serializable)
-    * [transient](#transient)
-* [六、网络操作](#六网络操作)
-    * [InetAddress](#inetaddress)
-    * [URL](#url)
-    * [Sockets](#sockets)
-    * [Datagram](#datagram)
-* [七、NIO](#七nio)
-    * [流与块](#流与块)
-    * [通道与缓冲区](#通道与缓冲区)
-    * [缓冲区状态变量](#缓冲区状态变量)
-    * [文件 NIO 实例](#文件-nio-实例)
-    * [选择器](#选择器)
-    * [套接字 NIO 实例](#套接字-nio-实例)
-    * [内存映射文件](#内存映射文件)
-    * [对比](#对比)
-* [八、参考资料](#八参考资料)
-<!-- GFM-TOC -->
+<!-- TOC -->
+
+- [基本概念](#基本概念)
+    - [阻塞/非阻塞，同步/异步](#阻塞非阻塞同步异步)
+    - [同步阻塞/同步非阻塞/异步阻塞/异步非阻塞](#同步阻塞同步非阻塞异步阻塞异步非阻塞)
+    - [IO NIO BIO AIO](#io-nio-bio-aio)
+    - [BIO、NIO、AIO适用场景分析:](#bionioaio适用场景分析)
+    - [select poll  epoll](#select-poll--epoll)
+- [对象操作](#对象操作)
+    - [序列化](#序列化)
+    - [Serializable](#serializable)
+    - [transient](#transient)
+- [一、概览](#一概览)
+- [二、磁盘操作](#二磁盘操作)
+- [三、字节操作](#三字节操作)
+    - [实现文件复制](#实现文件复制)
+    - [装饰者模式](#装饰者模式)
+- [四、字符操作](#四字符操作)
+    - [编码与解码](#编码与解码)
+    - [String 的编码方式](#string-的编码方式)
+    - [Reader 与 Writer](#reader-与-writer)
+    - [实现逐行输出文本文件的内容](#实现逐行输出文本文件的内容)
+- [六、网络操作](#六网络操作)
+    - [InetAddress](#inetaddress)
+    - [URL](#url)
+    - [Sockets](#sockets)
+    - [Datagram](#datagram)
+- [七、NIO](#七nio)
+    - [流与块](#流与块)
+    - [通道与缓冲区](#通道与缓冲区)
+        - [1. 通道](#1-通道)
+        - [2. 缓冲区](#2-缓冲区)
+    - [缓冲区状态变量](#缓冲区状态变量)
+    - [文件 NIO 实例](#文件-nio-实例)
+    - [选择器](#选择器)
+        - [1. 创建选择器](#1-创建选择器)
+        - [2. 将通道注册到选择器上](#2-将通道注册到选择器上)
+        - [3. 监听事件](#3-监听事件)
+        - [4. 获取到达的事件](#4-获取到达的事件)
+        - [5. 事件循环](#5-事件循环)
+    - [套接字 NIO 实例](#套接字-nio-实例)
+    - [内存映射文件](#内存映射文件)
+    - [对比](#对比)
+- [八、参考资料](#八参考资料)
+
+<!-- /TOC -->
+
+# 基本概念
+
+## 阻塞/非阻塞，同步/异步
+
+- 阻塞:请求方发送数据后,请求方得不到返回值就一直等.
+- 非阻塞:请求方发送数据后,无论是否得到返回
+
+- 同步:请求发送后,有消息返回,则继续发送,否则一直等待
+- 异步:请求方一直发送数据,无论接收方是否有消息返回.
+
+- 实例
+    - 家庭主妇在用热水器烧水，水没开的时候一直等着，别的啥也不干，这就是阻塞。但是如果烧水的时候同时去洗菜，就是非阻塞。
+    - 家庭主妇烧水用的是不带报警器的热水器，则该主妇需要不时自己过来看水是否烧开，此为同步；如果热水器有报警功能，水烧开后自动报警通知改主妇，则为异步。
+
+## 同步阻塞/同步非阻塞/异步阻塞/异步非阻塞
+
+- 同步阻塞：请求方自己看是否有结果返回，并且在有结果返回之前一直阻塞。
+- 同步非阻塞：请求方自己查看是否有结果返回，再有结果返回之前，也可以干别的事，但需要请求方经常查看。多request可共用线程，但是线程需要维护多个请求
+- 异步阻塞：被请求方通知是否有结果返回，并且请求方一直阻塞。一线程一连接，可多请求，但是挨个处理
+- 异步非阻塞：被请求方通知是否有结果返回，并且请求方可以干别的事。一线程已连接，可多请求，并且并发处理。
+- 实例
+  - 同步阻塞：小明一直盯着下载进度条，到 100% 的时候就完成。
+    - 同步体现在：等待下载完成通知；
+    - 阻塞体现在：等待下载完成通知过程中，不能做其他任务处理；
+
+  - 同步非阻塞：小明提交下载任务后就去干别的，每过一段时间就去瞄一眼进度条，看到 100% 就完成。
+    - 同步体现在：等待下载完成通知，但是要在；
+    - 非阻塞体现在：等待下载完成通知过程中，去干别的任务了，只是时不时会瞄一眼进度条；【小明必须要在两个任务间切换，关注下载进度】
+
+  - 异步阻塞：小明换了个有下载完成通知功能的软件，下载完成就“叮”一声。不过小明仍然一直等待“叮”的声音（看起来很傻，不是吗）。
+    - 异步体现在：下载完成“叮”一声通知；
+    - 阻塞体现在：等待下载完成“叮”一声通知过程中，不能做其他任务处理；
+
+  - 异步非阻塞：仍然是那个会“叮”一声的下载软件，小明提交下载任务后就去干别的，听到“叮”的一声就知道完成了。
+    - 异步体现在：下载完成“叮”一声通知；
+    - 非阻塞体现在：等待下载完成“叮”一声通知过程中，去干别的任务了，只需要接收“叮”声通知即可；【软件处理下载任务，小明处理其他任务，不需关注进度，只需接收软件“叮”声通知，即可】
+
+也就是说，同步/异步是“下载完成消息”通知的方式（机制），而阻塞/非阻塞则是在等待“下载完成消息”通知过程中的状态（能不能干其他任务），在不同的场景下，同步/异步、阻塞/非阻塞的四种组合都有应用。
+
+## IO NIO BIO AIO 
+
+- 同步阻塞IO（JAVA BIO）： 
+    - 同步并阻塞，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销，当然可以通过线程池机制改善。 
+
+- 同步非阻塞IO(Java NIO) ： 
+    - 同步非阻塞，服务器实现模式为一个请求一个线程，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有I/O请求时才启动一个线程进行处理。用户进程也需要时不时的询问IO操作是否就绪，这就要求用户进程不停的去询问。 
+
+- （Java AIO(NIO.2)）异步非阻塞IO:  
+   - 在此种模式下，用户进程只需要发起一个IO操作然后立即返回，等IO操作真正的完成以后，应用程序会得到IO操作完成的通知，此时用户进程只需要对数据进行处理就好了，不需要进行实际的IO读写操作，因为真正的IO读取或者写入操作已经由内核完成了。    
+
+## BIO、NIO、AIO适用场景分析:
+- BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4以前的唯一选择，但程序直观简单易理解。
+
+- NIO方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂，JDK1.4开始支持。
+
+- AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持
+
+## select poll  epoll
+- select模型：
+    - 基本原理：
+        - select 函数监视的文件描述符分3类，分别是writefds、readfds、和exceptfds。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。
+    
+    - 缺点：
+        - select最大的缺陷就是单个进程所打开的FD是有一定限制的，它由FD_SETSIZE设置，默认值是1024。32位机默认是1024个。64位机默认是2048.
+        - 对socket进行扫描时是线性扫描，即采用轮询的方法，效率较低。当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度，不管哪个Socket是活跃的，都遍历一遍。这会浪费很多CPU时间。如果能给套接字注册某个回调函数，当他们活跃时，自动完成相关操作，那就避免了轮询，这正是epoll与kqueue做的。
+        - 需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。
+
+- poll模型：
+    - 基本原理：
+        - poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。
+    
+    - 它没有最大连接数的限制，原因是它是基于链表来存储的，但是同样有一个缺点：    
+        - 1）大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。
+        - 2）poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。
+
+注意：从上面看，select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。
+
+- epoll模型：
+    - 基本原理：
+        - epoll支持水平触发和边缘触发，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就绪态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知。
+    - 优点：
+        - 1、没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。
+        - 2、效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。
+        - 3、内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递；即epoll使用mmap减少复制开销。
+
+- epoll对文件描述符的操作的两种模式：LT（level trigger,水平触发)和ET（edge trigger,边缘触发）。LT模式是默认模式
+    - LT模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。
+
+    - ET模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。
+        - ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。
+
+- select、poll、epoll区别
+    - 1、支持一个进程所能打开的最大连接数
+    <div align="left"> <img src="pics/select_poll_epoll区别1.png" width="600px"> </div><br>
+    - 2、FD剧增后带来的IO效率问题
+    <div align="left"> <img src="pics/select_poll_epoll区别2.png" width="600px"> </div><br>
+    - 3、消息传递方式
+    <div align="left"> <img src="pics/select_poll_epoll区别3.png" width="600px"> </div><br>
+
+
+# 对象操作
+
+## 序列化
+
+序列化就是将一个对象转换成字节序列，方便存储和传输。
+
+- 序列化：ObjectOutputStream.writeObject()
+- 反序列化：ObjectInputStream.readObject()
+
+不会对静态变量进行序列化，因为序列化只是保存对象的状态，静态变量属于类的状态。
+
+## Serializable
+
+序列化的类需要实现 Serializable 接口，它只是一个标准，没有任何方法需要实现，但是如果不去实现它的话而进行序列化，会抛出异常。
+
+```java
+public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+    A a1 = new A(123, "abc");
+    String objectFile = "file/a1";
+
+    ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile));
+    objectOutputStream.writeObject(a1);
+    objectOutputStream.close();
+
+    ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(objectFile));
+    A a2 = (A) objectInputStream.readObject();
+    objectInputStream.close();
+    System.out.println(a2);
+}
+
+private static class A implements Serializable {
+
+    private int x;
+    private String y;
+
+    A(int x, String y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "x = " + x + "  " + "y = " + y;
+    }
+}
+```
+
+## transient
+
+transient 关键字可以使一些属性不会被序列化。
+
+ArrayList 中存储数据的数组 elementData 是用 transient 修饰的，因为这个数组是动态扩展的，并不是所有的空间都被使用，因此就不需要所有的内容都被序列化。通过重写序列化和反序列化方法，使得可以只序列化数组中有内容的那部分数据。
+
+```java
+private transient Object[] elementData;
+```
 
 
 # 一、概览
@@ -168,63 +341,6 @@ public static void readFileContent(String filePath) throws IOException {
 }
 ```
 
-# 五、对象操作
-
-## 序列化
-
-序列化就是将一个对象转换成字节序列，方便存储和传输。
-
-- 序列化：ObjectOutputStream.writeObject()
-- 反序列化：ObjectInputStream.readObject()
-
-不会对静态变量进行序列化，因为序列化只是保存对象的状态，静态变量属于类的状态。
-
-## Serializable
-
-序列化的类需要实现 Serializable 接口，它只是一个标准，没有任何方法需要实现，但是如果不去实现它的话而进行序列化，会抛出异常。
-
-```java
-public static void main(String[] args) throws IOException, ClassNotFoundException {
-
-    A a1 = new A(123, "abc");
-    String objectFile = "file/a1";
-
-    ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile));
-    objectOutputStream.writeObject(a1);
-    objectOutputStream.close();
-
-    ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(objectFile));
-    A a2 = (A) objectInputStream.readObject();
-    objectInputStream.close();
-    System.out.println(a2);
-}
-
-private static class A implements Serializable {
-
-    private int x;
-    private String y;
-
-    A(int x, String y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public String toString() {
-        return "x = " + x + "  " + "y = " + y;
-    }
-}
-```
-
-## transient
-
-transient 关键字可以使一些属性不会被序列化。
-
-ArrayList 中存储数据的数组 elementData 是用 transient 修饰的，因为这个数组是动态扩展的，并不是所有的空间都被使用，因此就不需要所有的内容都被序列化。通过重写序列化和反序列化方法，使得可以只序列化数组中有内容的那部分数据。
-
-```java
-private transient Object[] elementData;
-```
 
 # 六、网络操作
 
@@ -620,12 +736,3 @@ NIO 与普通 I/O 的区别主要有以下两点：
 - [Socket Multicast](http://labojava.blogspot.com/2012/12/socket-multicast.html)
 
 
-
-
-# 微信公众号
-
-
-更多精彩内容将发布在微信公众号 CyC2018 上，你也可以在公众号后台和我交流学习和求职相关的问题。另外，公众号提供了该项目的 PDF 等离线阅读版本，后台回复 "下载" 即可领取。公众号也提供了一份技术面试复习大纲，不仅系统整理了面试知识点，而且标注了各个知识点的重要程度，从而帮你理清多而杂的面试知识点，后台回复 "大纲" 即可领取。我基本是按照这个大纲来进行复习的，对我拿到了 BAT 头条等 Offer 起到很大的帮助。你们完全可以和我一样根据大纲上列的知识点来进行复习，就不用看很多不重要的内容，也可以知道哪些内容很重要从而多安排一些复习时间。
-
-
-<br><div align="center"><img width="320px" src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/other/公众号海报6.png"></img></div>
