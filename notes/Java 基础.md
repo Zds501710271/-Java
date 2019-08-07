@@ -48,6 +48,8 @@
     - [finalize finalization finally](#finalize-finalization-finally)
     - [值传递与引用传递](#值传递与引用传递)
     - [四种引用](#四种引用)
+    - [equal和==的比较](#equal和的比较)
+    - [java内部类](#java内部类)
 
 <!-- /TOC -->
 
@@ -1629,8 +1631,31 @@ public static void main(String[] args) {
 ## finalize finalization finally
 - finally
     - finally 关键字是对 Java 异常处理模型的最佳补充。finally 结构使代码总会执行，而不管有无异常发生。使用 finally 可以维护对象的内部状态，并可以清理非内存资源。 如果没有 finally，您的代码就会很费解。
-    ``` java
+        ```java
+             public class WithoutFinally
+            {
+                public void foo() throws IOException
+                {
+                    //在任一个空闲的端口上创建一个套接字
+                    ServerSocket ss = new ServerSocket(0);
+                    try 
+                    {
+                        Socket socket = ss.accept(); //此处的其他代码...
+                    }
+                    catch (IOException e) 
+                    {
+                        ss.close();                                              //1
+                        throw e;
+                    }
+                    //...
+                    ss.close();                                                //2
+                }
+            }
+        ```  
+
+- 这段代码创建了一个套接字，并调用 accept 方法。在退出该方法之前，您必须关闭此套接字，以避免资源漏洞。为了完成这一任务，我们在 //2 处调用 close，它是该方法的最后一条语句。但是，如果 try 块中发生一个异常会怎么样呢？在这种情况下，//2 处的 close 调用永远不会发生。因此，您必须捕获这个异常，并在重新发出这个异常之前在 //1 处插入对 close 的另一个调用。这样就可以确保在退出该方法之前关闭套接字。
     
+    ```java
         public class WithoutFinally
         {
             public void foo() throws IOException
@@ -1641,21 +1666,52 @@ public static void main(String[] args) {
                 {
                     Socket socket = ss.accept(); //此处的其他代码...
                 }
-                catch (IOException e) 
+                finally 
                 {
-                    ss.close();                                              //1
-                    throw e;
+                    ss.close();                                           
                 }
-                //...
-                ss.close();                                                //2
             }
-　      }
-        这段代码创建了一个套接字，并调用 accept 方法。在退出该方法之前，您必须关闭此套接字，以避免资源漏洞。为了完成这一任务，我们在 //2 处调用 close，它是该方法的最后一条语句。但是，如果 try 块中发生一个异常会怎么样呢？在这种情况下，//2 处的 close 调用永远不会发生。因此，您必须捕获这个异常，并在重新发出这个异常之前在 //1 处插入对 close 的另一个调用。这样就可以确保在退出该方法之前关闭套接字。
-    ```
+        }
 
+    ```
+    
+    - finally 块确保 close 方法总被执行，而不管 try 块内是否发出异常。因此，可以确保在退出该方法之前总会调用 close 方法。这样您就可以确信套接字被关闭并且您没有泄漏资源。在此方法中不需要再有一个 catch 块。在第一个示例中提供 catch 块只是为了关闭套接字，现在这是通过 finally 关闭的。如果您确实提供了一个 catch 块，则 finally 块中的代码在 catch 块完成以后执行。
+
+    - finally 块必须与 try 或 try/catch 块配合使用。此外，不可能退出 try 块而不执行其 finally 块。如果 finally 块存在，则它总会执行。（无论从那点看，这个陈述都是正确的。有一种方法可以退出 try 块而不执行 finally 块。如果代码在 try 内部执行一条 System.exit(0); 语句，则应用程序终止而不会执行 finally 执行。另一方面，如果您在 try 块执行期间拨掉电源，finally 也不会执行。）
+    
+- finalize()方法
+    - java提供finalize()方法,当垃圾回收器准备释放内存的时候,会先调用finalize()方法
+    - 垃圾回收器（garbage collector）决定回收某对象时，就会运行该对象的finalize()方法；
+    - finalize()方法也叫收尾方法。
+    - 一旦垃圾回收器准备好释放对象占用的存储空间，首先会去调用finalize()方法
+    - 功能：
+        - 进行一些必要的清理工作（对垃圾回收器不能处理的特殊情况进行处理）
+        - 也有可能使该对象重新被引用，我习惯叫这种作用为复活。注意！！每个对象的finalize()方法只能被执行一次，第二次就会直接跳过finalize()方法，这就是为了防止出现对象无限复活，内存空间只增不减。
+    - 概念：
+        - 一旦垃圾收集器准备好释放对象占用的存储空间（进入第一个回收周期），首先会去调用finalize()方法进行一些必要的清理工作，只有到下一次再进行垃圾回收动作（下一个回收周期）的时候，才会真正释放这个对象所占用的内存空间。
+  
+    - finalize()方法的缺点:
+        - 可能是使对象复活
+        - finalize()执行的时间是不固定的,由GC决定,极端情况下,没有GC就不会执行finalize()方法
+        - 一个糟糕的finalize()会影响GC的性能
+- finalization的目的:
+    -  GC本来就是内存回收了，应用还需要在finalization做什么呢？
+        - 大部分时候，什么都不用做(也就是不需要重载)。只有在某些很特殊的情况下，比如你调用了一些native的方法(一般是C写的)，可以要在finaliztion里去调用C的释放函数。 
+    - inalization是对象逃脱死亡的最后一次机会。（只要重新与引用链上的任何一个对象建立关联即可。）但是不建议使用，运行代价高昂，不确定性大，且无法保证各个对象的调用顺序。可用try-finally或其他替代。
 
 ## 值传递与引用传递
 
+- 1、值传递
+    - 在方法的调用过程中，实参把它的实际值传递给形参，此传递过程就是将实参的值复制一份传递到函数中，这样如果在函数中对该值（形参的值）进行了操作将不会影响实参的值。因为是直接复制，所以这种方式在传递大量数据时，运行效率会特别低下。
+    - 在java中，只有值传递.
+
+- 2、引用传递
+    - 引用传递弥补了值传递的不足，如果传递的数据量很大，直接复过去的话，会占用大量的内存空间，而引用传递就是将对象的地址值传递过去，函数接收的是原始值的首地址值。在方法的执行过程中，形参和实参的内容相同，指向同一块内存地址，也就是说操作的其实都是源数据，所以方法的执行将会影响到实际对象。
+
+- 结论
+    - 基本数据类型传值，对形参的修改不会影响实参；
+    - 引用类型传引用，形参和实参指向同一个内存地址（同一个对象），所以对参数的修改会影响到实际的对象。
+    - String, Integer, Double等immutable不可变的类型特殊处理，可以理解为传值，最后的操作不会修改实参对象。
 
 ## 四种引用
 
@@ -1669,3 +1725,173 @@ public static void main(String[] args) {
     - 虚引用
 	    - 虚引用是最弱的一种引用关系，如果一个对象仅持有虚引用，那么它就和没有任何引用一样，它随时可能会被回收，在 JDK1.2 之后，用 PhantomReference 类来表示，通过查看这个类的源码，发现它只有一个构造函数和一个 get() 方法，而且它的 get() 方法仅仅是返回一个null，也就是说将永远无法通过虚引用来获取对象，虚引用必须要和 ReferenceQueue 引用队列一起使用。
 
+## equal和==的比较
+- ==
+    - 基本数据类型:操作比较的是两个变量的值是否相等;       
+    - 引用型变量：则比较的是所指向的对象的地址。
+
+- equals
+    - equals方法不能作用于基本数据类型的变量
+    - 如果没有对equals方法进行重写，则比较的是引用类型的变量所指向的对象的地址；
+    - String、Date等类对equals方法进行了重写的话，比较的是所指向的对象的内容。
+
+## java内部类
+- 在Java中，可以将一个类定义在另一个类里面或者一个方法里面，这样的类称为内部类。广泛意义上的内部类一般来说包括这四种：成员内部类、局部内部类、匿名内部类和静态内部类。
+
+- 成员内部类
+    ```java
+    class Outer{
+        private int num =5;
+        public class Inner{
+             public void dispaly(final int temp)
+            {
+                //....
+            }
+        }
+       
+    }
+    ```
+    - 成员内部类内部不允许存在任何static变量或方法 
+    - 需要注意的是， 当成员内部类拥有和外部类同名的成员变量或这方法时， 默认情况下访问的是内部类的成员， 如要访问外部类的同名成员， 需要使用以下形式：
+        - 外部类.this.成员变量
+        - 外部类.this.成员方法
+    - 虽然成员内部类可以无条件地访问外部类的成员，而外部类想访问成员内部类的成员却不是这么随心所欲了。在外部类中如果要访问成员内部类的成员，必须先创建一个成员内部类的对象，再通过指向这个对象的引用来访问：
+    ```java
+    class Circle {
+        private double radius = 0;
+ 
+        public Circle(double radius) {
+            this.radius = radius;
+            getDrawInstance().drawSahpe();   //必须先创建成员内部类的对象，再进行访问
+        }
+     
+        private Draw getDrawInstance() {
+            return new Draw();
+        }
+     
+        class Draw {     //内部类
+            public void drawSahpe() {
+                System.out.println(radius);  //外部类的private成员
+            }
+        }
+    }
+    ```
+    - 内部类是依附外部类而存在的， 也就是说要创建成员内部类的对象，前提是创建一个外部类的对象，创建成员内部类对象的方式如下：
+    ```java
+     public class Test {
+        public static void main(String[] args)  {
+             Outter outter = new Outter();
+        //第一种方式：
+           
+            Outter.Inner inner = outter.new Inner();  //必须通过Outter对象来创建
+         
+        //第二种方式：
+            Outter.Inner inner1 = outter.getInnerInstance();
+        }
+    }
+ 
+    class Outter {
+        private Inner inner = null;
+        public Outter() {
+         
+        }
+     
+        public Inner getInnerInstance() {
+            if(inner == null)
+                inner = new Inner();
+            return inner;
+        }
+      
+        class Inner {
+            public Inner() {
+             
+            }
+        }
+    }
+
+    ```
+    - 内部类可以拥有 private 访问权限、protected 访问权限、public 访问权限及包访问权限。
+        - 如果成员内部类 Inner 用 private 修饰，则只能在外部类的内部访问
+        - 如果用 public 修饰，则任何地方都能访问；
+        - 如果用 protected 修饰，则只能在同一个包下或者继承外部类的情况下访问；
+        - 如果是默认访问权限，则只能在同一个包下访问。
+    - 这一点和外部类有一点不一样，外部类只能被 public 和包访问两种权限修饰
+    
+- 局部内部类-方法内部类
+
+  - 局部内部类是定义在一个方法或作用域中的类，它的访问权限仅限于方法内或作用域内。
+    ```java
+    class Outer{
+        private int num =5;
+        public void dispaly(final int temp)
+        {
+            //方法内部类即嵌套在方法里面
+            public class Inner{
+            }
+        }
+    }
+
+    ```
+    - 注意: 局部内部类就像是方法里面的一个局部变量一样，是不能有 public、protected、private 以及 static 修饰符的。
+        
+- 匿名内部类
+    - 匿名内部类就是一个没有名字的方法内部类，因此特点和方法与方法内部类完全一致，除此之外，还有自己的特点：
+        - 1.匿名内部类必须继承一个抽象类或者实现一个接口。
+        - 2.匿名内部类没有类名，因此没有构造方法。
+    - 匿名内部类应该是平时我们编写代码时用得最多的，在编写事件监听的代码时使用匿名内部类不但方便，而且使代码更加容易维护。下面这段代码是一段 Android 事件监听代码：
+    ```java
+    scan_bt.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+         
+        }
+    });
+ 
+    history_bt.setOnClickListener(new OnClickListener() {
+     
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+         
+        }
+    });
+    这段代码为两个按钮设置监听器，这里面就使用了匿名内部类。这段代码中的：
+    new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO Auto-generated method stub
+         
+        }
+    }
+    就是匿名内部类的使用。代码中需要给按钮设置监听器对象，使用匿名内部类能够在实现父类或者接口中的方法情况下同时产生一个相应的对象，但是前提是这个父类或者接口必须先存在才能这样使用。当然像下面这种写法也是可以的，跟上面使用匿名内部类达到效果相同。
+    private void setListener()
+    {
+        scan_bt.setOnClickListener(new Listener1());       
+        history_bt.setOnClickListener(new Listener2());
+    }
+ 
+    class Listener1 implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+        // TODO Auto-generated method stub
+                
+        }
+    }
+ 
+    class Listener2 implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+        // TODO Auto-generated method stub
+                
+        }
+    }
+    这种写法虽然能达到一样的效果，但是既冗长又难以维护，所以一般使用匿名内部类的方法来编写事件监听代码。同样的，匿名内部类也是不能有访问修饰符和 static 修饰符的。
+    匿名内部类是唯一一种没有构造器的类。正因为其没有构造器，所以匿名内部类的使用范围非常有限，大部分匿名内部类用于接口回调。
+    匿名内部类在编译的时候由系统自动起名为 Outter$1.class。一般来说，匿名内部类用于继承其他类或是实现接口，并不需要增加额外的方法，只是对继承方法的实现或是重写
+    
+    ```
+- 静态内部类
+  - 用static修饰的内部类我们称之为静态内部类
+        - 静态内部类和非静态内部类之间存在一个最大的区别，非静态内部类在编译完成之后会隐含的保存着一个引用，该引用是指向创建它的外围类，但是静态类没有。
+        - 静态内部类是不需要依赖于外部类的，这点和类的静态成员属性有点类似，并且它不能使用外部类的非static成员变量或者方法，
