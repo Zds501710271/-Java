@@ -566,6 +566,20 @@ synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非�
 
 除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。
 
+
+# synchronized和Lock的区别
+
+  <div align="center"> <img src="pics/synchronized和Lock的区别.png" width="600px"> </div><br>
+
+# volatile和synchronized的区别
+
+volatile本质是在告诉jvm当前变量在寄存器（工作内存）中的值是不确定的，需要从主存中读取； synchronized则是锁定当前变量，只有当前线程可以访问该变量，其他线程被阻塞住。
+volatile仅能使用在变量级别；synchronized则可以使用在变量、方法、和类级别的
+volatile仅能实现变量的修改可见性，不能保证原子性；而synchronized则可以保证变量的修改可见性和原子性
+volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。
+volatile标记的变量不会被编译器优化；synchronized标记的变量可以被编译器优化
+
+
 # 六、线程之间的协作
 
 当多个线程可以一起工作去解决某个问题时，如果某些部分必须在其它部分之前完成，那么就需要对线程进行协调。
