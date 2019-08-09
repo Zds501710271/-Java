@@ -1520,7 +1520,7 @@ public static void main(String[] args) {
 ```
 
 ## ThreadLocal
-- ThreadLocal是什么
+- ThreadLocal是什么，当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。
     - 首先，它是一个数据结构，工具类。
     - 内部包含一个ThreadLocalMap类，该类为Thread类的一个局部变量，该Map存储的key为ThreadLocal对象自身，value为我们要存储的对象，这样一来，在不同线程中，持有的其实都是当前线程的变量副本，与其他线程完全隔离，以此来保证线程执行过程中不受其他线程的影响。
     - 源码分析
