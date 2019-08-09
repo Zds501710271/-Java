@@ -1,22 +1,109 @@
-<!-- GFM-TOC -->
-* [一、概览](#一概览)
-    * [Collection](#collection)
-    * [Map](#map)
-* [二、容器中的设计模式](#二容器中的设计模式)
-    * [迭代器模式](#迭代器模式)
-    * [适配器模式](#适配器模式)
-* [三、源码分析](#三源码分析)
-    * [ArrayList](#arraylist)
-    * [Vector](#vector)
-    * [CopyOnWriteArrayList](#copyonwritearraylist)
-    * [LinkedList](#linkedlist)
-    * [HashMap](#hashmap)
-    * [ConcurrentHashMap](#concurrenthashmap)
-    * [LinkedHashMap](#linkedhashmap)
-    * [WeakHashMap](#weakhashmap)
-* [参考资料](#参考资料)
-<!-- GFM-TOC -->
 
+<!-- TOC -->
+
+- [一、概览](#一概览)
+    - [Collection](#collection)
+        - [1. Set](#1-set)
+        - [2. List](#2-list)
+        - [3. Queue](#3-queue)
+    - [Map](#map)
+- [二、容器中的设计模式](#二容器中的设计模式)
+    - [迭代器模式](#迭代器模式)
+    - [适配器模式](#适配器模式)
+- [三、源码分析](#三源码分析)
+    - [ArrayList](#arraylist)
+        - [1. 概览](#1-概览)
+        - [2. 扩容](#2-扩容)
+        - [3. 删除元素](#3-删除元素)
+        - [4. Fail-Fast](#4-fail-fast)
+        - [5. 序列化](#5-序列化)
+    - [Vector](#vector)
+        - [1. 同步](#1-同步)
+        - [2. 与 ArrayList 的比较](#2-与-arraylist-的比较)
+        - [3. 替代方案](#3-替代方案)
+    - [CopyOnWriteArrayList](#copyonwritearraylist)
+        - [读写分离](#读写分离)
+        - [适用场景](#适用场景)
+    - [LinkedList](#linkedlist)
+        - [1. 概览](#1-概览-1)
+        - [2. 与 ArrayList 的比较](#2-与-arraylist-的比较-1)
+    - [HashMap](#hashmap)
+        - [1. 存储结构](#1-存储结构)
+        - [2. 拉链法的工作原理](#2-拉链法的工作原理)
+        - [3. put 操作](#3-put-操作)
+        - [4. 确定桶下标](#4-确定桶下标)
+        - [5. 扩容-基本原理](#5-扩容-基本原理)
+        - [6. 扩容-重新计算桶下标](#6-扩容-重新计算桶下标)
+        - [7. 计算数组容量](#7-计算数组容量)
+        - [8. 链表转红黑树](#8-链表转红黑树)
+        - [9. 与 HashTable 的比较](#9-与-hashtable-的比较)
+    - [ConcurrentHashMap](#concurrenthashmap)
+        - [1. 存储结构](#1-存储结构-1)
+        - [2. size 操作](#2-size-操作)
+        - [3. JDK 1.8 的改动](#3-jdk-18-的改动)
+    - [LinkedHashMap](#linkedhashmap)
+        - [存储结构](#存储结构)
+        - [afterNodeAccess()](#afternodeaccess)
+        - [afterNodeInsertion()](#afternodeinsertion)
+        - [LRU 缓存](#lru-缓存)
+    - [WeakHashMap](#weakhashmap)
+        - [存储结构](#存储结构-1)
+        - [ConcurrentCache](#concurrentcache)
+- [HashMap/HashTable/ConcurrHashMap](#hashmaphashtableconcurrhashmap)
+    - [HashMap](#hashmap-1)
+        - [什么是HashMap？](#什么是hashmap)
+        - [HashMap的工作原理？](#hashmap的工作原理)
+        - [怎样计算key在数组中的位置(hash算法)？根据HashCode计算数组下标？](#怎样计算key在数组中的位置hash算法根据hashcode计算数组下标)
+        - [碰撞，hash冲突](#碰撞hash冲突)
+        - [HashMap的扩容resize()？](#hashmap的扩容resize)
+        - [HashMap长度为什么等于2的幂？ ？](#hashmap长度为什么等于2的幂-)
+        - [JDK1.8的HashMap的优化？](#jdk18的hashmap的优化)
+        - [为什么JDK1.8中HashMap链表长度超过8会转成树结构？？](#为什么jdk18中hashmap链表长度超过8会转成树结构)
+        - [HashMap为什么是线程不安全的？](#hashmap为什么是线程不安全的)
+        - [为什么String, Interger这样的wrapper类适合作为键？？](#为什么string-interger这样的wrapper类适合作为键)
+        - [我们可以使用自定义的对象作为键吗？？](#我们可以使用自定义的对象作为键吗)
+    - [HashTable](#hashtable)
+        - [什么是HashTable](#什么是hashtable)
+        - [HashTable的参数？](#hashtable的参数)
+        - [HashTable的扩容](#hashtable的扩容)
+    - [HashTable和HashMap的区别](#hashtable和hashmap的区别)
+    - [ConcurrHashMap](#concurrhashmap)
+        - [什么是ConcurrentHashMap?](#什么是concurrenthashmap)
+        - [为什么用ConcurrentHashMap?](#为什么用concurrenthashmap)
+        - [JDK1.7 ConcurrentHashMap?](#jdk17-concurrenthashmap)
+            - [结构](#结构)
+                - [Segment](#segment)
+                - [什么是分段锁技术？](#什么是分段锁技术)
+            - [ConcurrentHashMap的工作原理？](#concurrenthashmap的工作原理)
+            - [初始化](#初始化)
+                - [三个参数](#三个参数)
+                - [初始化ConcurrentHashMap](#初始化concurrenthashmap)
+                - [初始化Segment分段](#初始化segment分段)
+                - [三次hash](#三次hash)
+            - [Put操作？](#put操作)
+            - [Get操作？](#get操作)
+            - [Remove操作？](#remove操作)
+            - [size操作？](#size操作)
+        - [JDK1.8 ConcurrentHashMap?](#jdk18-concurrenthashmap)
+            - [结构](#结构-1)
+                - [CAS原理？](#cas原理)
+            - [ConcurrentHashMap的工作原理？](#concurrenthashmap的工作原理-1)
+            - [初始化](#初始化-1)
+                - [三个参数](#三个参数-1)
+                - [初始化ConcurrentHashMap](#初始化concurrenthashmap-1)
+                - [初始化Segment分段](#初始化segment分段-1)
+                - [三次hash](#三次hash-1)
+            - [Put操作？](#put操作-1)
+            - [Get操作？](#get操作-1)
+            - [Remove操作？](#remove操作-1)
+            - [size操作？](#size操作-1)
+        - [什么是ConcurrentHashMap?](#什么是concurrenthashmap-1)
+        - [什么是ConcurrentHashMap?](#什么是concurrenthashmap-2)
+        - [什么是ConcurrentHashMap?](#什么是concurrenthashmap-3)
+- [其他](#其他)
+    - [序列化和反序列化](#序列化和反序列化)
+
+<!-- /TOC -->
 
 # 一、概览
 
@@ -1094,29 +1181,373 @@ public final class ConcurrentCache<K, V> {
 }
 ```
 
+# HashMap/HashTable/ConcurrHashMap
 
-# 参考资料
+## HashMap
 
-- Eckel B. Java 编程思想 [M]. 机械工业出版社, 2002.
-- [Java Collection Framework](https://www.w3resource.com/java-tutorial/java-collections.php)
-- [Iterator 模式](https://openhome.cc/Gossip/DesignPattern/IteratorPattern.htm)
-- [Java 8 系列之重新认识 HashMap](https://tech.meituan.com/java_hashmap.html)
-- [What is difference between HashMap and Hashtable in Java?](http://javarevisited.blogspot.hk/2010/10/difference-between-hashmap-and.html)
-- [Java 集合之 HashMap](http://www.zhangchangle.com/2018/02/07/Java%E9%9B%86%E5%90%88%E4%B9%8BHashMap/)
-- [The principle of ConcurrentHashMap analysis](http://www.programering.com/a/MDO3QDNwATM.html)
-- [探索 ConcurrentHashMap 高并发性的实现机制](https://www.ibm.com/developerworks/cn/java/java-lo-concurrenthashmap/)
-- [HashMap 相关面试题及其解答](https://www.jianshu.com/p/75adf47958a7)
-- [Java 集合细节（二）：asList 的缺陷](http://wiki.jikexueyuan.com/project/java-enhancement/java-thirtysix.html)
-- [Java Collection Framework – The LinkedList Class](http://javaconceptoftheday.com/java-collection-framework-linkedlist-class/)
+### 什么是HashMap？
+
+- 基于哈希表的 Map 接口的实现。
+- HashMap 是一个散列表，它存储的内容是键值对(key-value)映射。
+- HashMap 继承于AbstractMap，实现了Map、Cloneable、java.io.Serializable接口。
+- HashMap 的实现不是同步的，这意味着它不是线程安全的。它的key、value都可以为null。此外，HashMap中的映射不是有序的。
+
+### HashMap的工作原理？
+
+- HashMap是基于hashing的原理，我们使用put(key, value)存储对象到HashMap中，使用get(key)从HashMap中获取对象。
+	- Put: 当我们往hashmap中put元素的时候，先根据key的hash值得到这个元素在数组中的位置（即下标），如果下标对应的链表为空，则直接把键值对作为链表头节点，如果不为空，发生哈希冲突，则equals方法在对应位置的链表中找到需要的元素，有就把value替换，没有那么在同一个位子上的元素将以链表的形式存放，新加入的放在链头，最先加入的放在链尾。（JDK1.7之所以放在头节点，是因为HashMap的发明者认为后插入的Entry被查找的可能性更大。）
+
+	- Get: 从hashmap中get元素时，首先计算key的hashcode，找到数组中对应位置的某一元素，然后通过key的equals方法在对应位置的链表中找到需要的元素。
+
+### 怎样计算key在数组中的位置(hash算法)？根据HashCode计算数组下标？
+
+- 我们当然希望这个hashmap里面的元素位置尽量的分布均匀些，尽量使得每个位置上的元素数量只有一个，那么当我们用hash算法求得这个位置的时候，马上就可以知道对应位置的元素就是我们要的，而不用再去遍历链表
+
+- JDK1.7
+    -  h&(length-1) 就相当于对length取模，而且在速度、效率上比直接取模要快得多
+
+- JDK1.8优化
+    - 高16位异或低16位，然后再h&(length-1)，目的：混合原始哈希码的高位和低位，以此来加大低位的随机性。而且混合后的低位掺杂了高位的部分特征，这样高位的信息也被变相保留下来。
+    - <div align="left"> <img src="pics/Hash算法JDK8.png" width="600px"> </div><br>
+
+### 碰撞，hash冲突
+
+- 哈希表为解决 Hash 冲突，可以采用开放地址法和链地址法来解决问题。HashMap 采用了链地址法。链地址法，简单来说，就是数组加链表的结合。在每个数组元素上都一个链表结构，当数据被 Hash 后，得到数组下标，把数据放在对应下标元素的链表上。
+- JDK1.7 链表头插。JDK1.8 链表尾插。
+
+### HashMap的扩容resize()？
+
+- JDK 1.7   先扩容后插入
+	- hashmap使用一个容量更大的数组来代替旧的数组，transfer（）方法将原有Entry数组里的元素拷贝到新的Entry数组里，扩容之后，原数组中的数据必须重新计算其在新数组中的位置，并放进去，这就是resize。
+    - 新容量=旧容量*2；默认旧容量=16*0.75=12
+	- 在扩容后插入的过程中，存储在LinkedList中的元素的次序会反过来，因为移动到新的bucket位置的时候，HashMap并不会将元素放在LinkedList的尾部，而是放在头部，这是为了避免尾部遍历(tail traversing)。
+- JDK 1.8   先插入后扩容
+	- 在JDK1.8的时候直接用了JDK1.7的时候计算的规律，也就是扩容前的原始位置+扩容的大小值=JDK1.8的计算方式，而不再是JDK1.7的那种与计算的方法。但是这种方式就相当于只需要判断Hash值的新增参与运算的位是0还是1就直接迅速计算出了扩容后的储存方式。
+    - <div align="left"> <img src="pics/HashMapJDK1.8扩容.png" width="600px"> </div><br>
+
+- JDK 1.7/1.8扩容区别 
+    - <div align="left"> <img src="pics/hashMap1.7和1.8扩容区别.png" width="600px"> </div><br>  
+
+### HashMap长度为什么等于2的幂？ ？
+
+- hashmap中默认的数组大小为16，加载因子0.75。并且每次自动扩展或手动初始化时，长度必须是2的幂。
+-  举例：
+    - 看下图，左边两组是数组长度为16（2的4次方），右边两组是数组长度为15。两组的hashcode均为8和9，但是很明显，当它们和1110“与”的时候，产生了相同的结果，也就是说它们会定位到数组中的同一个位置上去，这就产生了碰撞，8和9会被放到同一个链表上，那么查询的时候就需要遍历这个链表，得到8或者9，这样就降低了查询的效率。
+	- 同时，我们也可以发现，当数组长度为15的时候，hashcode的值会与14（1110）进行“与”，那么最后一位永远是0，而0001，0011，0101，1001，1011，0111，1101这几个位置永远都不能存放元素了，显然不符合Hash算法均匀分布的原则，空间浪费相当大，更糟的是这种情况中，数组可以使用的位置比数组长度小了很多，这意味着进一步增加了碰撞的几率，减慢了查询的效率！
+    - <div align="left"> <img src="pics/HashMap的长度为什么是16或是2的幂次方.png" width="600px"> </div><br>  
+- 所以，长度16或者其他2的幂，Length-1的值是所有二进制位全为1，这种情况下，index的结果等同于HashCode后几位的值。只要输入的HashCode本身分布均匀，Hash算法的结果就是均匀的。
+
+### JDK1.8的HashMap的优化？
+
+- 数据结构变化：
+    - 数组+链表+红黑树，当链表的深度达到8的时候，也就是默认阈值，就会自动扩容把链表转成红黑树的数据结构来把时间复杂度从O（N）变成O（logN）提高了效率
+- Hash算法计算方式改变：
+    - 高16位异或低16位，后&(length-1)
+- 扩容后不是重新计算所有元素在数组的位置：   
+    - 新的位置=旧的位置   OR   旧的位置+旧容量
+- JDK1.7用的是头插法，而JDK1.8及之后使用的都是尾插法，
+	- 因为JDK1.7是用单链表进行的纵向延伸，当采用头插法就是能够提高插入的效率，但是也会容易出现逆序且环形链表死循环问题。但是在JDK1.8之后是因为加入了红黑树，使用尾插法能够避免出现逆序且链表死循环的问题。
+- 链表死循环问题 https://coolshell.cn/articles/9606.html/comment-page-1#comments
+
+### 为什么JDK1.8中HashMap链表长度超过8会转成树结构？？
+
+- 1.若桶中链表元素个数大于等于8时，链表转换成树结构；若桶中链表元素个数小于等于6时，树结构还原成链表。因为红黑树的平均查找长度是log(n)，长度为8的时候，平均查找长度为3，如果继续使用链表，平均查找长度为8/2=4，这才有转换为树的必要。链表长度如果是小于等于6，6/2=3，虽然速度也很快的，但是转化为树结构和生成树的时间并不会太短。
+- 2.还有选择6和8，中间有个差值7可以有效防止链表和树频繁转换。假设一下，如果设计成链表个数超过8则链表转换成树结构，链表个数小于8则树结构转换成链表，如果一个HashMap不停的插入、删除元素，链表个数在8左右徘徊，就会频繁的发生树转链表、链表转树，效率会很低。
+- 3. 在这里简单解释一下，理想情况下，在随机哈希代码下，桶中的节点频率遵循泊松分布，文中给出了桶长度k的频率表。由频率表可以看出，桶的长度超过8的概率非常非常小。所以作者应该是根据概率统计而选择了8作为阀值，由此可见，这个选择是非常严谨和科学的。
+- <div align="left"> <img src="pics/hashMap1.8链表转换为红黑树的界限8符合泊松分布.png" width="600px"> </div><br>  
+
+### HashMap为什么是线程不安全的？
+
+- HashMap resize而引起死循环.（条件竞争）。扩容的的时候可能会形成环形链表， 造成死循环. https://coolshell.cn/articles/9606.html/comment-page-1#comments
+- put的时候导致的多线程数据不一致
+    - 在多线程下put操作时,产生哈希碰撞，最后的写入操作会覆盖先前的写入操作----写入不一致。最后的修改操作会覆盖先前的修改---修改不一致。
+- 注意：要想实现线程安全，那么需要调用 collections 类的静态方法
+
+### 为什么String, Interger这样的wrapper类适合作为键？？
+
+- 1.不可变性： String是不可变的，也是final的
+    - 计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashcode的话，那么就不能从HashMap中找到你想要的对象。
+    - 不可变性还有其他的优点如线程安全。
+
+- 2.已经重写了equals()和hashCode()方法
+    - 为什么要重写equals()方法？
+        - 1．Object类中equals方法比较的是两个对象的引用地址，只有对象的引用地址指向同一个地址时，才认为这两个地址是相等的，否则这两个对象就不相等。
+	    - 2.如果有两个对象，他们的属性是相同的，但是地址不同，这样使用equals()比较得出的结果是不相等的，而我们需要的是这两个对象相等，因此默认的equals()方法是不符合我们的要求的，这个时候我们就需要对equals()方法进行重写以满足我们的预期结果。
+        - 3.在java的集合框架中需要用到equals()方法进行查找对象，如果集合中存放的是自定义类型，并且没有重写equals()方法，则会调用Object父类中的equals()方法按照地址比较，往往会出现错误的结果，此时我们应该根据业务需求重写equals()方法。
+        - 如果不重写equals，那么比较的将是对象的引用是否指向同一块内存地址，重写之后目的是为了比较两个对象的value值是否相等。
+
+    - 为什么java中在重写equals()方法后必须对hashCode()方法进行重写？
+        - 1.为了维护hashCode()方法的equals协定，该协定指出：相等的对象必须具有相等的散列码（hashCode）；而两个hashCode()返回的结果相等，两个对象的equals()方法不一定相等。
+	    - 2.如果不重写hashCode()，就会造成相等对象，不同的hashCode();在hashMap中就会存储两个值一样的对象。导致混淆。
+
+
+### 我们可以使用自定义的对象作为键吗？？
+
+- 当然你可能使用任何对象作为键，只要它遵守了equals()和hashCode()方法的定义规则，并且当对象插入到Map中之后将不会再改变了。如果这个自定义对象时不可变的，那么它已经满足了作为键的条件，因为当它创建之后就已经不能改变了。
+
+## HashTable
+
+### 什么是HashTable
+
+- Hashtable 也是一个散列表，它存储的内容是键值对(key-value)映射。
+- Hashtable 继承于Dictionary，实现了Map、Cloneable、java.io.Serializable接口。
+- Hashtable 的函数都是同步的，这意味着它是线程安全的。它的key、value都不可以为null。此外，Hashtable中的映射不是有序的。
+
+###  HashTable的参数？
+
+- （1） table 是一个 Entry[]数组类型， 而 Entry 实际上就是一个单向链表。 哈希表的"key-value 键值对"都是存储在 Entry 数组中的。
+- （2） count 是 Hashtable 的大小， 它是 Hashtable 保存的键值对的数量。
+- （3） threshold 是 Hashtable 的阈值， 用于判断是否需要调整 Hashtable 的容量。
+threshold 的值="容量*加载因子"。
+- （4） loadFactor 就是加载因子。
+- （5） modCount 是用来实现 fail-fast 机制的
+
+### HashTable的扩容
+- 默认初始容量为 11
+- 线程安全， 但是速度慢， 不允许 key/value 为 null
+- 加载因子为 0.75： 即当元素个数超过容量长度的0.75倍时， 进行扩容
+	- 扩容增量： 2*原数组长度+1
+		- 如 HashTable 的容量为 11， 一次扩容后是容量为 23
+
+## HashTable和HashMap的区别
+- 1.继承的父类不同
+	- Hashtable继承自Dictionary类，而HashMap继承自AbstractMap类。但二者都实现了Map接口。
+- 2.线程安全性不同
+	- Hashtable 同步-线程安全。HashMap 非同步-不是线程安全的。
+- 3.是否提供contains方法
+	- HashMap把Hashtable的contains方法去掉了，改成containsValue和containsKey
+	- Hashtable则保留了contains，containsValue和containsKey三个方法，其中contains和containsValue功能相同。
+- 4.key和value是否允许null值
+	- Hashtable不允许，HashMap允许
+- 5.两个遍历方式的内部实现上不同
+	- Hashtable、HashMap都使用了 Iterator。而由于历史原因，Hashtable还使用了Enumeration的方式 。
+- 6.哈希值的使用不同
+	- Hashtable直接使用对象的hashCode、HashMap重新计算hash值，而且用于代替求模
+- 7.内部实现使用的数组初始化和扩容方式不同，
+	- Hashtable默认容量为11，不要求底层数组的容量一定要为2的整数次幂，扩容时将容量变为原来的2倍加1，
+	- HashMap默认容量为16，要求底层数组的容量一定要为2的整数次幂，扩容时将容量变为原来的2倍
+
+## ConcurrHashMap
+
+### 什么是ConcurrentHashMap?
+
+- ConcurrentHashMap就是多线程编程中可以使用的一种高性能的线程安全HashMap方案。
+
+### 为什么用ConcurrentHashMap?
+
+- HashMap是线程不安全的，在并发环境下，可能会形成环状链表（扩容时可能造成，具体原因自行百度google或查看源码分析），导致get操作时，cpu空转
+- HashTable线程安全的策略实现代价却太大了，简单粗暴，get/put所有相关操作都是synchronized的，这相当于给整个哈希表加了一把大锁，多线程访问时候，只要有一个线程访问或操作该对象，那其他线程只能阻塞，相当于将所有的操作串行化，在竞争激烈的并发场景中性能就会非常差。
+
+### JDK1.7 ConcurrentHashMap?
+
+#### 结构
+
+- <div align="left"> <img src="pics/ConcurrenHashMap1.7结构图.png" width="600px"> </div><br>  
+
+##### Segment
+
+- Segment的结构和HashMap类似，是一种数组和链表结构。
+- 同HashMap一样，Segment包含一个HashEntry数组，数组中的每一个HashEntry既是一个键值对，也是一个链表的头节点。
+- 每个Segment守护着一个HashEntry数组里的元素,当对HashEntry数组的数据进行修改时，必须首先获得它对应的Segment锁。
+- Segment是一种可重入锁ReentrantLock
+
+##### 什么是分段锁技术？	
+
+- 容器里有多把锁，每一把锁用于锁容器其中一部分数据，那么当多线程访问容器里不同数据段的数据时，线程间就不会存在锁竞争，从而可以有效的提高并发访问效率
+
+#### ConcurrentHashMap的工作原理？
+
+- ConcurrentHashMap所使用的锁分段技术，首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，其他段的数据也能被其他线程访问。能够实现真正的并发访问。
+- 有一些方法需要跨段，比如size()和containsValue()，它们可能需要锁定整个表而不仅仅是某个段，这需要按顺序锁定所有段，操作完毕后，又按顺序释放所有段的锁。这里“按顺序”是很重要的，否则极有可能出现死锁
+
+#### 初始化
+
+- <div align="left"> <img src="pics/ConcurrentHashMap的数据结构1.7.png" width="600px"> </div><br>  
+
+##### 三个参数
+
+- initialCapacity
+    - initialCapacity表示新创建的这个ConcurrentHashMap的初始容量，也就是上面的结构图中的Entry数量。默认值为static final int DEFAULT_INITIAL_CAPACITY = 16;
+    
+- loadFactor
+    - loadFactor表示负载因子，就是当ConcurrentHashMap中的元素个数大于loadFactor * 最大容量时就需要rehash，扩容。默认值为static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+- concurrencyLevel
+    - concurrencyLevel表示并发级别，这个值用来确定Segment的个数，Segment的个数是大于等于concurrencyLevel的第一个2的n次方的数。比如，如果concurrencyLevel为12，13，14，15，16这些数，则Segment的数目为16(2的4次方)。默认值为static final int DEFAULT_CONCURRENCY_LEVEL = 16;。理想情况下ConcurrentHashMap的真正的并发访问量能够达到concurrencyLevel，因为有concurrencyLevel个Segment，假如有concurrencyLevel个线程需要访问Map，并且需要访问的数据都恰好分别落在不同的Segment中，则这些线程能够无竞争地自由访问（因为他们不需要竞争同一把锁），达到同时访问的效果。这也是为什么这个参数起名为“并发级别”的原因。
+    
+- concurrencyLevel主要用来初始化segments、segmentShift和segmentMask等；而initialCapacity和loadFactor则主要用来初始化每个Segment分段。
+
+##### 初始化ConcurrentHashMap
+
+- ssize(segments数组的长度)   sshift(计算ssize时进行移位操作的次数)
+- segmentShift 段偏移量 
+- segmentMask  段掩码 
+- 例子：
+
+##### 初始化Segment分段
+
+- ssize  2的N次方大于等于ConcurrentHashMapLevel
+- sshift (计算ssize时进行移位操作的次数)log(ssize)
+- segmentShift = 32 - sshift; //之所以用32是因为ConcurrentHashMap里的hash()方法输出的最大数是32位的
+- segmentMask = ssize - 1;
+- 例如LconcurrencyLevel等于16，则ssize=16,sshift=4，则segmentShift为28,。segmentMask=15;hash值是一个32位的整数，将其向右移动28位就变成这个样子：0000 0000 0000 0000 0000 0000 0000 xxxx，然后再用这个值与segmentMask做&运算，也就是取最后四位的值。这个值确定Segment的索引。
+
+##### 三次hash
+
+- Segment下面包含很多个HashEntry列表数组。对于一个key，需要经过三次（为什么要hash三次下文会详细讲解）hash操作，才能最终定位这个元素的位置，这三次hash分别为：
+    - 对于一个key，先进行一次hash操作，得到hash值h1，也即h1 = hash1(key)；
+    - 将得到的h1的高几位进行第二次hash，得到hash值h2，也即h2 = hash2(h1高几位)，通过h2能够确定该元素的放在哪个Segment；
+    - 将得到的h1进行第三次hash，得到hash值h3，也即h3 = hash3(h1)，通过h3能够确定该元素放置在哪个HashEntry。
+    
+#### Put操作？
+
+put操作是要加锁的。
+- 判断value是否为null，如果为null，直接抛出异常。
+- key通过一次hash运算得到一个hash值。(这个hash运算下文详说)
+- 将得到hash值向右按位移动segmentShift位，然后再与segmentMask做&运算得到segment的索引j。
+- 在初始化的时候我们说过segmentShift的值等于32-sshift，例如concurrencyLevel等于16，则sshift等于4，则segmentShift为28。hash值是一个32位的整数，将其向右移动28位就变成这个样子：
+0000 0000 0000 0000 0000 0000 0000 xxxx，然后再用这个值与segmentMask做&运算，也就是取最后四位的值。这个值确定Segment的索引。
+- 使用Unsafe的方式从Segment数组中获取该索引对应的Segment对象。
+- 向这个Segment对象中put值，这个put操作也基本是一样的步骤（通过&运算获取HashEntry的索引，然后set）。
+
+#### Get操作？
+
+- JDK1.7的ConcurrentHashMap的get操作是不加锁的，因为在每个Segment中定义的HashEntry数组和在每个HashEntry中定义的value和next HashEntry节点都是volatile类型的，volatile类型的变量可以保证其在多线程之间的可见性，因此可以被多个线程同时读，从而不用加锁。
+- 而其get操作步骤也比较简单，定位Segment –> 定位HashEntry –> 通过getObjectVolatile()方法获取指定偏移量上的HashEntry –> 通过循环遍历链表获取对应值。
+
+    - 定位Segment：(((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE
+
+    - 定位HashEntry：(((tab.length - 1) & h)) << TSHIFT) + TBASE
+
+#### Remove操作？
+
+#### size操作？
+
+- 计算ConcurrentHashMap的元素大小是一个有趣的问题，因为他是并发操作的，就是在你计算size的时候，他还在并发的插入数据，可能会导致你计算出来的size和你实际的size有相差（在你return size的时候，插入了多个数据），要解决这个问题，JDK1.7版本用两种方案
+- 第一种方案他会使用不加锁的模式去尝试多次计算ConcurrentHashMap的size，最多三次，比较前后两次计算的结果，结果一致就认为当前没有元素加入，计算的结果是准确的
+- 第二种方案是如果第一种方案不符合，他就会给每个Segment加上锁，然后计算ConcurrentHashMap的size返回
+- 举例：
+    - 一个Map有4个Segment，标记为S1，S2，S3，S4，现在我们要获取Map的size。
+    - 计算过程是这样的：
+        - 第一次计算，不对S1，S2，S3，S4加锁，遍历所有的Segment，假设每个Segment的大小分别为1，2，3，4，更新操作次数分别为：2，2，3，1，则这次计算可以得到Map的总大小为1+2+3+4=10，总共更新操作次数为2+2+3+1=8；
+        - 第二次计算，不对S1,S2,S3,S4加锁，遍历所有Segment，假设这次每个Segment的大小变成了2，2，3，4，更新次数分别为3，2，3，1，因为两次计算得到的Map更新次数不一致(第一次是8，第二次是9)则可以断定这段时间Map数据被更新，则此时应该再试一次；
+        - 第三次计算，不对S1，S2，S3，S4加锁，遍历所有Segment，假设每个Segment的更新操作次数还是为3，2，3，1，则因为第二次计算和第三次计算得到的Map的更新操作的次数是一致的，就能说明第二次计算和第三次计算这段时间内Map数据没有被更新，此时可以直接返回第三次计算得到的Map的大小。
+        - 最坏的情况：第三次计算得到的数据更新次数和第二次也不一样，则只能先对所有Segment加锁再计算最后解锁。
+
+### JDK1.8 ConcurrentHashMap?
+
+#### 结构
+
+- ConcurrentHashMap在1.8版本摒弃了Segment（锁段）的概念，而是启用了一种全新的CAS算法的方式实现，Node + CAS + Synchronized。数据结构沿用了与它同时期的HashMap版本的思想，底层依然由数组+链表+红黑树的方式思想。
+- <div align="left"> <img src="pics/ConcurrHashMap1.8结构.png" width="600px"> </div><br>  
+
+##### CAS原理？	
+
+- 乐观锁：认为数据一般情况下不会造成冲突，所以在数据进行提交更新的时候，才会正式对数据的冲突与否进行检测，如果发现冲突了，则让用户返回错误的信息。让用户决定如何去做。
+- 悲观锁:就是对数据的冲突采取一种悲观的态度，也就是说假设数据肯定会冲突，所以在数据开始读取的时候就把数据锁定住。【数据锁定：数据将暂时不会得到修改】
+
+- CAS（Compare And Swap，比较交换）：CAS有三个操作数，内存值V、预期值A、要修改的新值B，当且仅当A和V相等时才会将V修改为B，否则什么都不做。
+- 实现CAS最重要的一点，就是比较和交换操作的一致性，否则就会产生歧义。
+    - 比如当前线程比较成功后，准备更新共享变量值的时候，这个共享变量值被其他线程更改了，那么CAS函数必须返回false。
+- CAS通过调用JNI的代码实现的。JNI:Java Native Interface为JAVA本地调用，允许java调用其他语言。
+- 要实现这个需求，java中提供了Unsafe类，它提供了三个函数，分别用来操作基本类型int和long，以及引用类型Object
+```java
+ public final native boolean compareAndSwapObject
+       (Object obj, long valueOffset, Object expect, Object update);
+
+    public final native boolean compareAndSwapInt
+       (Object obj, long valueOffset, int expect, int update);
+
+    public final native boolean compareAndSwapLong
+      (Object obj, long valueOffset, long expect, long update);
+```
+#### ConcurrentHashMap的工作原理？
+
+- 在JDK1.7之前，ConcurrentHashMap是通过分段锁机制来实现的，所以其最大并发度受Segment的个数限制。因此，在JDK1.8中，ConcurrentHashMap的实现原理摒弃了这种设计，而是选择了与HashMap类似的数组+链表+红黑树的方式实现，而加锁则采用CAS和synchronized实现。
+
+#### 初始化
+
+- <div align="left"> <img src="pics/ConcurrentHashMap的数据结构1.7.png" width="600px"> </div><br>  
+
+##### 三个参数
+
+- initialCapacity
+    - initialCapacity表示新创建的这个ConcurrentHashMap的初始容量，也就是上面的结构图中的Entry数量。默认值为static final int DEFAULT_INITIAL_CAPACITY = 16;
+    
+- loadFactor
+    - loadFactor表示负载因子，就是当ConcurrentHashMap中的元素个数大于loadFactor * 最大容量时就需要rehash，扩容。默认值为static final float DEFAULT_LOAD_FACTOR = 0.75f;
+
+- concurrencyLevel
+    - concurrencyLevel表示并发级别，这个值用来确定Segment的个数，Segment的个数是大于等于concurrencyLevel的第一个2的n次方的数。比如，如果concurrencyLevel为12，13，14，15，16这些数，则Segment的数目为16(2的4次方)。默认值为static final int DEFAULT_CONCURRENCY_LEVEL = 16;。理想情况下ConcurrentHashMap的真正的并发访问量能够达到concurrencyLevel，因为有concurrencyLevel个Segment，假如有concurrencyLevel个线程需要访问Map，并且需要访问的数据都恰好分别落在不同的Segment中，则这些线程能够无竞争地自由访问（因为他们不需要竞争同一把锁），达到同时访问的效果。这也是为什么这个参数起名为“并发级别”的原因。
+    
+- concurrencyLevel主要用来初始化segments、segmentShift和segmentMask等；而initialCapacity和loadFactor则主要用来初始化每个Segment分段。
+
+##### 初始化ConcurrentHashMap
+
+- ssize(segments数组的长度)   sshift(计算ssize时进行移位操作的次数)
+- segmentShift 段偏移量 
+- segmentMask  段掩码 
+- 例子：
+
+##### 初始化Segment分段
+
+- ssize  2的N次方大于等于ConcurrentHashMapLevel
+- sshift (计算ssize时进行移位操作的次数)log(ssize)
+- segmentShift = 32 - sshift; //之所以用32是因为ConcurrentHashMap里的hash()方法输出的最大数是32位的
+- segmentMask = ssize - 1;
+- 例如LconcurrencyLevel等于16，则ssize=16,sshift=4，则segmentShift为28,。segmentMask=15;hash值是一个32位的整数，将其向右移动28位就变成这个样子：0000 0000 0000 0000 0000 0000 0000 xxxx，然后再用这个值与segmentMask做&运算，也就是取最后四位的值。这个值确定Segment的索引。
+
+##### 三次hash
+
+- Segment下面包含很多个HashEntry列表数组。对于一个key，需要经过三次（为什么要hash三次下文会详细讲解）hash操作，才能最终定位这个元素的位置，这三次hash分别为：
+    - 对于一个key，先进行一次hash操作，得到hash值h1，也即h1 = hash1(key)；
+    - 将得到的h1的高几位进行第二次hash，得到hash值h2，也即h2 = hash2(h1高几位)，通过h2能够确定该元素的放在哪个Segment；
+    - 将得到的h1进行第三次hash，得到hash值h3，也即h3 = hash3(h1)，通过h3能够确定该元素放置在哪个HashEntry。
+    
+#### Put操作？
+
+put操作是要加锁的。
+- 判断value是否为null，如果为null，直接抛出异常。
+- key通过一次hash运算得到一个hash值。(这个hash运算下文详说)
+- 将得到hash值向右按位移动segmentShift位，然后再与segmentMask做&运算得到segment的索引j。
+- 在初始化的时候我们说过segmentShift的值等于32-sshift，例如concurrencyLevel等于16，则sshift等于4，则segmentShift为28。hash值是一个32位的整数，将其向右移动28位就变成这个样子：
+0000 0000 0000 0000 0000 0000 0000 xxxx，然后再用这个值与segmentMask做&运算，也就是取最后四位的值。这个值确定Segment的索引。
+- 使用Unsafe的方式从Segment数组中获取该索引对应的Segment对象。
+- 向这个Segment对象中put值，这个put操作也基本是一样的步骤（通过&运算获取HashEntry的索引，然后set）。
+
+#### Get操作？
+
+- JDK1.7的ConcurrentHashMap的get操作是不加锁的，因为在每个Segment中定义的HashEntry数组和在每个HashEntry中定义的value和next HashEntry节点都是volatile类型的，volatile类型的变量可以保证其在多线程之间的可见性，因此可以被多个线程同时读，从而不用加锁。
+- 而其get操作步骤也比较简单，定位Segment –> 定位HashEntry –> 通过getObjectVolatile()方法获取指定偏移量上的HashEntry –> 通过循环遍历链表获取对应值。
+
+    - 定位Segment：(((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE
+
+    - 定位HashEntry：(((tab.length - 1) & h)) << TSHIFT) + TBASE
+
+#### Remove操作？
+
+#### size操作？
+
+- 计算ConcurrentHashMap的元素大小是一个有趣的问题，因为他是并发操作的，就是在你计算size的时候，他还在并发的插入数据，可能会导致你计算出来的size和你实际的size有相差（在你return size的时候，插入了多个数据），要解决这个问题，JDK1.7版本用两种方案
+- 第一种方案他会使用不加锁的模式去尝试多次计算ConcurrentHashMap的size，最多三次，比较前后两次计算的结果，结果一致就认为当前没有元素加入，计算的结果是准确的
+- 第二种方案是如果第一种方案不符合，他就会给每个Segment加上锁，然后计算ConcurrentHashMap的size返回
+- 举例：
+    - 一个Map有4个Segment，标记为S1，S2，S3，S4，现在我们要获取Map的size。
+    - 计算过程是这样的：
+        - 第一次计算，不对S1，S2，S3，S4加锁，遍历所有的Segment，假设每个Segment的大小分别为1，2，3，4，更新操作次数分别为：2，2，3，1，则这次计算可以得到Map的总大小为1+2+3+4=10，总共更新操作次数为2+2+3+1=8；
+        - 第二次计算，不对S1,S2,S3,S4加锁，遍历所有Segment，假设这次每个Segment的大小变成了2，2，3，4，更新次数分别为3，2，3，1，因为两次计算得到的Map更新次数不一致(第一次是8，第二次是9)则可以断定这段时间Map数据被更新，则此时应该再试一次；
+        - 第三次计算，不对S1，S2，S3，S4加锁，遍历所有Segment，假设每个Segment的更新操作次数还是为3，2，3，1，则因为第二次计算和第三次计算得到的Map的更新操作的次数是一致的，就能说明第二次计算和第三次计算这段时间内Map数据没有被更新，此时可以直接返回第三次计算得到的Map的大小。
+        - 最坏的情况：第三次计算得到的数据更新次数和第二次也不一样，则只能先对所有Segment加锁再计算最后解锁。
+### 什么是ConcurrentHashMap?
+### 什么是ConcurrentHashMap?
+### 什么是ConcurrentHashMap?
 
 
 
 
+# 其他
 
-# 微信公众号
-
-
-更多精彩内容将发布在微信公众号 CyC2018 上，你也可以在公众号后台和我交流学习和求职相关的问题。另外，公众号提供了该项目的 PDF 等离线阅读版本，后台回复 "下载" 即可领取。公众号也提供了一份技术面试复习大纲，不仅系统整理了面试知识点，而且标注了各个知识点的重要程度，从而帮你理清多而杂的面试知识点，后台回复 "大纲" 即可领取。我基本是按照这个大纲来进行复习的，对我拿到了 BAT 头条等 Offer 起到很大的帮助。你们完全可以和我一样根据大纲上列的知识点来进行复习，就不用看很多不重要的内容，也可以知道哪些内容很重要从而多安排一些复习时间。
-
-
-<br><div align="center"><img width="320px" src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/other/公众号海报6.png"></img></div>
+## 序列化和反序列化
+- 对象序列化是一个用于将对象状态转换为字节流的过程，可以将其保存到磁盘文件中或通过网络发送到任何其他程序；
+- 从字节流创建对象的相反的过程称为反序列化。
+- 而创建的字节流是与平台无关的，在一个平台上序列化的对象可以在不同的平台上反序列化。
