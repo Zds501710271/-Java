@@ -8,7 +8,7 @@
 
 | &nbsp;算法&nbsp; | 操作系统 | &nbsp;网络&nbsp;|面向对象| &nbsp;&nbsp;数据库&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Java&nbsp;&nbsp;&nbsp;|         系统设计| &nbsp;&nbsp;&nbsp;工具&nbsp;&nbsp;&nbsp; |编码实践| &nbsp;&nbsp;&nbsp;后记&nbsp;&nbsp;&nbsp; |
 | :---: | :----: | :---: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| [:pencil2:](#pencil2-算法) | [:computer:](#computer-操作系统) | [:cloud:](#cloud-网络) | [:art:](#art-面向对象) | [:floppy_disk:](#floppy_disk-数据库) |[:coffee:](#coffee-java)| [:wrench:](#wrench-Java框架) |[:bulb:](#bulb-系统设计) |[:wrench:](#wrench-工具)| [:watermelon:](#watermelon-编码实践) |[:memo:](#memo-后记)|
+| [:pencil2:](#pencil2-算法) | [:computer:](#computer-操作系统) | [:cloud:](#cloud-网络) | [:art:](#art-面向对象) | [:floppy_disk:](#floppy_disk-数据库) |[:coffee:](#coffee-java)| [:wrench:](#wrench-Java框架) |[:bulb:](#bulb-系统设计) |[:wrench:](#wrench-设计模式)| [:watermelon:](#watermelon-项目延伸的问题) |[:memo:](#memo-后记)|
 
 <br>
 
@@ -22,7 +22,9 @@
 
 - [剑指 Offer 题解](https://github.com/Zds501710271/-Java/blob/master/notes/%E5%89%91%E6%8C%87%20offer%20%E9%A2%98%E8%A7%A3.md)
 - [Leetcode 题解](https://github.com/Zds501710271/-Java/blob/master/notes/Leetcode%20%E9%A2%98%E8%A7%A3.md)
-- [算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95.md)
+- [算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
+- [常用排序算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
+- [二叉树的各种遍历](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
 
 ## :computer: 操作系统
 
@@ -69,17 +71,17 @@
 - [缓存](https://github.com/Zds501710271/-Java/blob/master/notes/缓存.md)
 - [消息队列](https://github.com/Zds501710271/-Java/blob/master/notes/消息队列.md)
 
-## :wrench: 工具 
+## :wrench: 设计模式 
 
 - [Git](https://github.com/Zds501710271/-Java/blob/master/notes/Git.md)
 - [Docker](https://github.com/Zds501710271/-Java/blob/master/notes/Docker.md)
 - [构建工具](https://github.com/Zds501710271/-Java/blob/master/notes/构建工具.md)
 - [正则表达式](https://github.com/Zds501710271/-Java/blob/master/notes/正则表达式.md)
 
-## :watermelon: 编码实践 
+## :watermelon: 项目延伸的问题 
 
-- [代码可读性](https://github.com/Zds501710271/-Java/blob/master/notes/代码可读性.md)
-- [代码风格规范](https://github.com/Zds501710271/-Java/blob/master/notes/代码风格规范.md)
+- [数据库间的不同](https://github.com/Zds501710271/-Java/blob/master/notes/代码可读性.md)
+- [语言的不同](https://github.com/Zds501710271/-Java/blob/master/notes/代码风格规范.md)
 
 ## :memo: 后记
 
