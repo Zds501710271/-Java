@@ -23,7 +23,7 @@
 - [剑指 Offer 题解](https://github.com/Zds501710271/-Java/blob/master/notes/%E5%89%91%E6%8C%87%20offer%20%E9%A2%98%E8%A7%A3.md)
 - [Leetcode 题解](https://github.com/Zds501710271/-Java/blob/master/notes/Leetcode%20%E9%A2%98%E8%A7%A3.md)
 - [算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
-- [常用排序算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
+- [常用排序算法](https://github.com/Zds501710271/-Java/blob/master/notes/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AE%97%E6%B3%95.md)
 - [二叉树的各种遍历](https://github.com/Zds501710271/-Java/blob/master/notes/%E7%AE%97%E6%B3%95%20-%20%E6%8E%92%E5%BA%8F.md)
 
 ## :computer: 操作系统
