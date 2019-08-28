@@ -80,8 +80,8 @@
 
 ## :watermelon: 项目延伸的问题 
 
-- [数据库间的不同](https://github.com/Zds501710271/-Java/blob/master/notes/代码可读性.md)
-- [语言的不同](https://github.com/Zds501710271/-Java/blob/master/notes/代码风格规范.md)
+- [数据库间的不同](https://github.com/Zds501710271/-Java/blob/master/notes/数据库之间的区别.md)
+- [语言的不同](https://github.com/Zds501710271/-Java/blob/master/notes/编程语言的区别.md)
 
 ## :memo: 后记
 
