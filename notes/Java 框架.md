@@ -134,9 +134,11 @@ Spring 提供面向切面编程，可以方便地实现对程序进行权限拦�
     - Spring MVC 是一个基于 MVC 架构的用来简化 web 应用程序开发的应用开发框架， 它是 Spring 的一个模块,无需中间整合层来整合 ， 它和 Struts2 一样都属于表现层的框架。 在 web 模型中， MVC 是
 一种很流行的框架， 通过把 Model， View， Controller 分离， 把较为复杂的 web 应用分成逻辑清晰的几部分， 简化开发， 减少出错， 方便组内开发人员之间的配合
 
+
+<div align="center"> <img src="pics/mvc执行过程.png" width="600px"> </div><br>
+
 - Spring MVC 执行流程（工作原理）
-- ![Struts2详细运行流程](https://images2018.cnblogs.com/blog/1370903/201808/1370903-20180827201021158-682489195.png)
-    -  1.用户发送请求至前端控制器 DispatcherServlet
+    - 1.用户发送请求至前端控制器 DispatcherServlet
     - 2.DispatcherServlet 收到请求调用 HandlerMapping 处理器映射器。
     - 3.处理器映射器根据请求 url 找到具体的处理器， 生成处理器对象及处理器拦截器(如果有则生成)一并返回给 DispatcherServlet。
     - 4.DispatcherServlet 通过 HandlerAdapter 处理器适配器调用处理器
